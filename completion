@@ -6,23 +6,21 @@
 #      (though see the weirdness of THIS_SCRIPT described
 #      below)
 
-# XXX: produces a funny path ending with bash (or other shell name?)
-THIS_SCRIPT=$(readlink -f "$0")
-# XXX: produces a path that's the invoking path
-THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+_task_names() {
+  # XXX: produces a funny path ending with bash (or other shell name?)
+  THIS_SCRIPT=$(readlink -f "$0")
+  # XXX: produces a path that's the invoking path
+  THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
-# XXX: try to improve the way the path is expressed here
-#
-# n.b. this is literal, not globbed
-tasks="${THIS_SCRIPT_DIR}/.atsp/task/*"
+  # XXX: try to improve the way the path is expressed here
+  #
+  # n.b. this is literal, not globbed
+  tasks="${THIS_SCRIPT_DIR}/.atsp/task/*"
 
-task_names=""
+  for task in ${tasks}
+  do
+    COMPREPLY+=("$(basename "${task}")")
+  done
+}
 
-for task in ${tasks}
-do
-  task_name="$(basename "${task}")"
-
-  task_names="${task_names} ${task_name}"
-done
-
-complete -W "${task_names}" atsp
+complete -F _task_names atsp
