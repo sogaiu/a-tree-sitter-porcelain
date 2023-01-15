@@ -9,11 +9,20 @@ Really early :)
 ## Setup
 
 ```
+# assuming there's an existing grammar repository under ~/src
 cd ~/src
 cd tree-sitter-<your-lang>
+
+# clone as .atsp inside the grammar repository
 git clone https://github.com/sogaiu/a-tree-sitter-helper .atsp
-# need this to put `atsp` on PATH
+
+# need this to put `atsp` command on PATH
 export PATH=$(pwd)/.atsp/bin:$PATH
+
+# optionally setup bash completion
+source .atsp/completion
+
+# see a list of subcommands
 atsp list
 ```
 
