@@ -1,7 +1,7 @@
 #! /bin/sh
 
 # shellcheck disable=SC2034
-THIS_SCRIPT_DESC="Create tree-sitter config.json if it doesn't exist"
+THIS_SCRIPT_DESC="Create tree-sitter config.json if needed"
 
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")

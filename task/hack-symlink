@@ -1,7 +1,7 @@
 #! /bin/sh
 
 # shellcheck disable=SC2034
-THIS_SCRIPT_DESC="Create symlink to help constrain tree-sitter scanning"
+THIS_SCRIPT_DESC="Make symlink to limit tree-sitter scanning"
 
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
@@ -92,6 +92,10 @@ if [ "${SYS_TYPE}" = "MINGW64" ]; then
 else
   ln -sf . "${LINK_NAME}"
 fi
+
+printf "* To get limiting to work fully, see footnote in a comment of:\n"
+
+printf "    tree-sitter/tree-sitter#2017\n"
 
 cd "${CUR_DIR}" || exit 1
 
