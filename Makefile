@@ -88,6 +88,10 @@ dump:
 dump-languages:
 	$(ATSP_TASK)/dump-languages
 
+.PHONY: check
+check:
+	$(ATSP_TASK)/check
+
 ##############
 # list tasks #
 ##############

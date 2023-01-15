@@ -17,17 +17,6 @@ OLD_TREE_SITTER_LIBDIR=${TREE_SITTER_LIBDIR}
 
 # XXX: things that might be useful at some point elsewhere
 
-# example tree-sitter --version output:
-#
-#   tree-sitter 0.20.7 (9ac55f79d191f6fa200b1894ddac449fa3df70c1)
-#
-#   1           2      3
-#
-# so split on spaces and take the 2nd and 3rd fields
-TS_VERSION=$($TS_PATH --version | cut -d' ' -f2)
-# also remove surrounding parens -- otherwise can interfere with things
-TS_COMMIT=$($TS_PATH --version | cut -d' ' -f3 | tr -d '()')
-
 #MIN_VERSION=0.19.4
 MIN_VERSION=0.20.8
 

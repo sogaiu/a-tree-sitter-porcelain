@@ -1,0 +1,143 @@
+#! /bin/sh
+
+# shellcheck disable=SC2034
+THIS_SCRIPT_DESC="Perform diagnostics and report"
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+
+# capture before being overwritten
+OLD_TREE_SITTER_DIR="${TREE_SITTER_DIR}"
+OLD_TREE_SITTER_LIBDIR="${TREE_SITTER_LIBDIR}"
+
+# shellcheck source=.common
+. "${THIS_SCRIPT_DIR}/.common"
+
+########################################################################
+
+CUR_DIR=$(pwd)
+
+cd "${PARSER_PROJ_DIR}" || exit 1
+
+########################################################################
+
+printf "tree-sitter\n"
+
+printf "\n"
+
+if [ "" = "${TS_PATH}" ]; then
+  printf "* TS_PATH not set."
+  exit 1
+fi
+
+# XXX: is this correct?
+if [ ! -e "$(realpath "${TS_PATH}")" ] && \
+   [ "" = "$(which "${TS_PATH}")" ]; then
+  printf "* cli not found at: %s\n" "${TS_PATH}"
+  exit 1
+fi
+
+printf "* Located binary\n"
+
+printf "* TS_PATH: %s\n" "${TS_PATH}"
+
+# example tree-sitter --version output:
+#
+#   tree-sitter 0.20.7 (9ac55f79d191f6fa200b1894ddac449fa3df70c1)
+#
+#   1           2      3
+#
+# so split on spaces and take the 2nd and 3rd fields
+printf "* version: %s\n" "$($TS_PATH --version | cut -d' ' -f2)"
+# also remove surrounding parens -- otherwise can interfere with things
+printf "* commit: %s\n" "$($TS_PATH --version | cut -d' ' -f3 | tr -d '()')"
+
+printf "\n"
+
+########################################################################
+
+# XXX: this was taken from build-wasm...should not be duplicating...
+
+printf "emsdk\n"
+
+printf "\n"
+
+# try getting a value from conf file
+EMSDK=${EMSDK:-"$("${ATSP_UTIL}"/emsdk-path)"}
+# if still empty, default to sibling of grammar repository?
+EMSDK=${EMSDK:-"${PARSER_PROJ_DIR}/../emsdk"}
+
+if [ "" = "${EMSDK}" ]; then
+ printf "* Did not find an appropriate value for EMSDK"
+ exit 1
+fi
+
+if [ ! -d "${EMSDK}" ]; then
+ printf "* EMSDK value not a directory: %s\n" "${EMSDK}"
+ exit 1
+fi
+
+EMSDK=$(realpath "${EMSDK}")
+
+printf "* Located directory\n"
+
+printf "* EMSDK: %s\n" "${EMSDK}"
+
+# some consistency checking
+#
+# XXX: this should work as long as emsdk_env.* keeps setting the
+#      EMSDK_NODE env var?
+if [ ! -d "${EMSDK}/node" ]; then
+  printf "* EMSDK directory doesn't look right: %s\n" "${EMSDK}"
+  exit 1
+fi
+
+printf "* Looks like an emsdk directory\n"
+
+# XXX: lame...
+#   https://emscripten.org/docs/tools_reference/emsdk.html#how-do-i-check-which-versions-of-the-sdk-and-tools-are-installed
+printf "* To find out the version installed, run:\n"
+
+printf "    ./emsdk list | grep INSTALLED\n"
+
+printf "  in:\n"
+
+printf "    %s\n" "${EMSDK}"
+
+printf "\n"
+
+########################################################################
+
+printf "Some TREE_SITTER_* environment variables\n"
+
+printf "\n"
+
+printf "* In the original environment:\n"
+
+printf "  * TREE_SITTER_DIR was: %s\n" "${OLD_TREE_SITTER_DIR}"
+
+printf "  * TREE_SITTER_LIBDIR was: %s\n" "${OLD_TREE_SITTER_LIBDIR}"
+
+printf "* atsp may have massaged these to:\n"
+
+printf "  * TREE_SITTER_DIR: %s\n" "${TREE_SITTER_DIR}"
+
+printf "  * TREE_SITTER_LIBDIR: %s\n" "${TREE_SITTER_LIBDIR}"
+
+printf "\n"
+
+########################################################################
+
+printf "atsp's conf file currently contains:\n"
+
+printf "\n"
+
+cat "${ATSP_CONF}"
+
+printf "\n"
+
+########################################################################
+
+cd "${CUR_DIR}" || exit 1
+
+printf "Done\n"
