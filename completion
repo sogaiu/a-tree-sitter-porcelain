@@ -7,6 +7,11 @@
 #      below)
 
 _task_names() {
+  # don't complete if at least one argument typed already
+  if [ "${#COMP_WORDS[@]}" != "2" ]; then
+    return
+  fi
+
   # XXX: produces a funny path ending with bash (or other shell name?)
   THIS_SCRIPT=$(readlink -f "$0")
   # XXX: produces a path that's the invoking path
@@ -14,7 +19,7 @@ _task_names() {
 
   if [ ! -d "${THIS_SCRIPT_DIR}/.atsp" ]; then
     #printf "Not in an appropriate place"
-    return;
+    return
   fi
 
   # XXX: try to improve the way the path is expressed here
