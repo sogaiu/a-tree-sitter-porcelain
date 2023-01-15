@@ -24,10 +24,12 @@ fi
 
 printf "* Invoking tree-sitter generate subcommand\n"
 
-# XXX: tree-sitter creates src directory if necessary
+TS_ABI=${TS_ABI:-$("${ATSP_UTIL}"/abi)}
 
-# XXX: abstract out ABI number?
-${TS_PATH} generate --abi 13 --no-bindings
+# XXX: tree-sitter creates src directory if necessary so
+#      not necessary for this script to check for it?
+
+${TS_PATH} generate --abi "${TS_ABI}" --no-bindings
 
 cd "${CUR_DIR}" || exit 1
 

@@ -61,16 +61,28 @@ EMSDK=${EMSDK:-"$("${ATSP_UTIL}"/emsdk-path)"}
 # if still empty, default to sibling of grammar repository?
 EMSDK=${EMSDK:-"${PARSER_PROJ_DIR}/../emsdk"}
 
-# XXX: check if still empty and bail if so?
 if [ "" = "${EMSDK}" ]; then
  printf "* Did not find an appropriate value for EMSDK"
  exit 1
 fi
 
+if [ ! -d "${EMSDK}" ]; then
+ printf "* EMSDK value not a directory: %s\n" "${EMSDK}"
+ exit 1
+fi
+
 EMSDK=$(realpath "${EMSDK}")
 
-# XXX: any sanity checking?  could check for ${EMSDK}/node
 printf "* EMSDK: %s\n" "${EMSDK}"
+
+# some consistency checking
+#
+# XXX: this should work as long as emsdk_env.* keeps setting the
+#      EMSDK_NODE env var?
+if [ ! -d "${EMSDK}/node" ]; then
+  printf "* EMSDK directory doesn't look right: %s\n" "${EMSDK}"
+  exit 1
+fi
 
 EMSCRIPTEN="${EMSDK}/upstream/emscripten"
 
@@ -88,7 +100,8 @@ export PATH="${EMSDK}:${EMSCRIPTEN}:${NODE_BIN_DIR_PATH}:${PATH}"
 printf "* Invoking tree-sitter build-wasm subcommand\n"
 
 # XXX: possibly need to make TREE_SITTER_DIR / TREE_SITTER_LIBDIR
-#      available via export?
+#      available via export?  don't think so as those are only
+#      necessary for parsing-like activities?
 
 ${TS_PATH} build-wasm
 

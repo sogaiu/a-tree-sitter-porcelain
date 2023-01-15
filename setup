@@ -56,7 +56,7 @@ do
 
   guess=${guess:-"${TS_LANG_NAME_GUESS}"}
 
-  # XXX: improve sanity check -- c identifier chars and - are ok?
+  # XXX: improve consistency check -- c identifier chars and - are ok?
   scan=$(echo "${guess}" | sed 's/[^_a-zA-Z0-9-]//')
 
   printf "\n"

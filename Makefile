@@ -37,11 +37,15 @@ ATSP_CONF := $(ATSP_ROOT)/conf
 ATSP_TASK := $(ATSP_ROOT)/task
 ATSP_UTIL := $(ATSP_ROOT)/util
 
+# XXX: could have a script that fetches a default value - reduce
+#      duplication with .common script?
 BUILD_DIR_NAME ?= build/atsp
 SO_BUILD_PATH := $(shell $(ATSP_UTIL)/so-build-path $(BUILD_DIR_NAME))
 
 # XXX
 TREE_SITTER_DIR ?= .tree-sitter
+# XXX: could be a bit more selective about where to do this as it's
+#      not always relevant for each target
 export TREE_SITTER_DIR
 SO_INSTALL_DIR ?= $(shell $(ATSP_UTIL)/so-install-dir $(TREE_SITTER_DIR))
 INSTALLED_SO_PATH := $(shell $(ATSP_UTIL)/installed-so-path \
@@ -49,11 +53,21 @@ INSTALLED_SO_PATH := $(shell $(ATSP_UTIL)/installed-so-path \
 
 # XXX
 TREE_SITTER_LIBDIR ?= $(TREE_SITTER_DIR)/lib
+# XXX: could be a bit more selective about where to do this as it's
+#      not always relevant for each target
 export TREE_SITTER_LIBDIR
 
-# XXX: allow EMSDK override?
+# XXX
+EMSDK ?= $(shell $(ATSP_UTIL)/emsdk-path)
+# XXX: could be a bit more selective about where to do this as it's
+#      not always relevant for each target
+export EMSDK
 
-# XXX: allow ABI override?
+# XXX
+TS_ABI ?= $(shell $(ATSP_UTIL)/abi)
+# XXX: could be a bit more selective about where to do this as it's
+#      not always relevant for each target
+export TS_ABI
 
 PARSER_WASM := $(shell $(ATSP_UTIL)/wasm-name)
 

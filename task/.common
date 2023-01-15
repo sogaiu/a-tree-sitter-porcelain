@@ -69,5 +69,8 @@ INSTALLED_SO_PATH=$("${ATSP_UTIL}"/installed-so-path "${SO_INSTALL_DIR}")
 # NOTE: a value that is a subdirectory of build is better than build because
 #       build can also contain node or rust bindings.  don't want to
 #       accidentally delete those
+
+# XXX: could have a script that fetches a default value - reduce duplication
+#      with Makefile?
 BUILD_DIR_NAME=${BUILD_DIR_NAME:-build/atsh}
 BUILD_DIR_PATH=${PARSER_PROJ_DIR}/${BUILD_DIR_NAME}
