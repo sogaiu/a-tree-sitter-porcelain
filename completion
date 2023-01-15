@@ -12,6 +12,11 @@ _task_names() {
   # XXX: produces a path that's the invoking path
   THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
+  if [ ! -d "${THIS_SCRIPT_DIR}/.atsp" ]; then
+    #printf "Not in an appropriate place"
+    return;
+  fi
+
   # XXX: try to improve the way the path is expressed here
   #
   # n.b. this is literal, not globbed
