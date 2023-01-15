@@ -2,6 +2,10 @@
 
 A hackable porcelain for tree-sitter grammar-related tasks.
 
+## Status
+
+Really early :)
+
 ## Setup
 
 ```
@@ -10,7 +14,7 @@ cd tree-sitter-<your-lang>
 git clone https://github.com/sogaiu/a-tree-sitter-helper .atsp
 # need this to put `atsp` on PATH
 export PATH=$(pwd)/.atsp/bin:$PATH
-atsp help
+atsp list
 ```
 
 ## Idea
@@ -26,9 +30,9 @@ Some things that seem achievable:
   * Different flags for building
     ([#1518](https://github.com/tree-sitter/tree-sitter/issues/1518))
 
-* Customizing building of`.wasm` files when investigating Emscripten
+* Customizing building of `.wasm` files when investigating Emscripten
   breakage
-  ([#1829](https://github.com/tree-sitter/tree-sitter/issues/1829)
+  ([#1829](https://github.com/tree-sitter/tree-sitter/issues/1829))
 
 * Customize playground
 
@@ -44,9 +48,9 @@ Some things that seem achievable:
 ## What's In Here
 
 * `bin` - contains wrapper script `atsp` which invokes `make`
-* `conf` - contains settings specific to this grammar repository
+* `conf` - contains settings specific to the grammar repository
 * `task` - task scripts
-* `util` - directory of utility scripts
+* `util` - directory of utility scripts used by task scripts and `Makefile`
 * `Makefile` - Makefile that invokes task scripts
 * `README.md` - this README file
 
@@ -63,8 +67,10 @@ The `conf` file is meant to contain just lines that look like:
 TS_LANGUAGE=clojure
 ```
 
-The information in `conf` is meant to abstract out differences between
-grammars.  At the moment, that's just the name of the grammar.
+Other values that can be configured include:
+
+* `EMSDK` - path to emsdk
+* `ABI` - ABI version for `tree-sitter generate` to use (13 is good now)
 
 ### `task`
 
@@ -104,5 +110,7 @@ The scripts' names do not have file extensions deliberately:
 To lint, run `shellcheck -x <name>` on the shell files in `task`
 and `util` directories.
 
-Invoke `shellcheck` from inside `task` or `util`.  I'm not sure its
-checking will function correctly for "source"d files otherwise.
+Invoke [`shellcheck`](https://github.com/koalaman/shellcheck) from
+inside `task` or `util`.  I'm not sure its checking will function
+correctly for "source"d files otherwise.
+
