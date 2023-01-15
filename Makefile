@@ -34,24 +34,28 @@
 ATSP_ROOT := .atsp
 
 ATSP_CONF := $(ATSP_ROOT)/conf
-ATSP_TASKS := $(ATSP_ROOT)/task
-ATSP_UTILS := $(ATSP_ROOT)/util
+ATSP_TASK := $(ATSP_ROOT)/task
+ATSP_UTIL := $(ATSP_ROOT)/util
 
 BUILD_DIR_NAME ?= build/atsp
-SO_BUILD_PATH := $(shell $(ATSP_UTILS)/so-build-path $(BUILD_DIR_NAME))
+SO_BUILD_PATH := $(shell $(ATSP_UTIL)/so-build-path $(BUILD_DIR_NAME))
 
 # XXX
 TREE_SITTER_DIR ?= .tree-sitter
 export TREE_SITTER_DIR
-SO_INSTALL_DIR ?= $(shell $(ATSP_UTILS)/so-install-dir $(TREE_SITTER_DIR))
-INSTALLED_SO_PATH := $(shell $(ATSP_UTILS)/installed-so-path \
+SO_INSTALL_DIR ?= $(shell $(ATSP_UTIL)/so-install-dir $(TREE_SITTER_DIR))
+INSTALLED_SO_PATH := $(shell $(ATSP_UTIL)/installed-so-path \
                                           $(SO_INSTALL_DIR))
 
 # XXX
 TREE_SITTER_LIBDIR ?= $(TREE_SITTER_DIR)/lib
 export TREE_SITTER_LIBDIR
 
-PARSER_WASM := $(shell $(ATSP_UTILS)/wasm-name)
+# XXX: allow EMSDK override?
+
+# XXX: allow ABI override?
+
+PARSER_WASM := $(shell $(ATSP_UTIL)/wasm-name)
 
 ########################################################################
 
@@ -62,27 +66,27 @@ PARSER_WASM := $(shell $(ATSP_UTILS)/wasm-name)
 # XXX: using `set` can be a handy way to see what env vars got exported
 .PHONY: dump
 dump:
-	$(ATSP_TASKS)/dump
+	$(ATSP_TASK)/dump
 	@echo
-	$(ATSP_TASKS)/dump-languages
+	$(ATSP_TASK)/dump-languages
 
 .PHONY: dump-languages
 dump-languages:
-	$(ATSP_TASKS)/dump-languages
+	$(ATSP_TASK)/dump-languages
 
 ##############
 # list tasks #
 ##############
 .PHONY: list
 list:
-	$(ATSP_TASKS)/list
+	$(ATSP_TASK)/list
 
 ######################
 # create config.json #
 ######################
 .PHONY: create-ts-config
 create-ts-config:
-	$(ATSP_TASKS)/create-ts-config
+	$(ATSP_TASK)/create-ts-config
 
 ################
 # symlink hack #
@@ -90,7 +94,7 @@ create-ts-config:
 
 .PHONY: hack-symlink
 hack-symlink:
-	$(ATSP_TASKS)/hack-symlink
+	$(ATSP_TASK)/hack-symlink
 
 #################
 # shared object #
@@ -115,17 +119,17 @@ hack-symlink:
 
 # XXX: gen-src for convenient invocation
 src/parser.c gen-src: grammar.js
-	$(ATSP_TASKS)/gen-src
+	$(ATSP_TASK)/gen-src
 
 parser-source: src/parser.c
 
 # XXX: build-so for convenient invocation
 $(SO_BUILD_PATH) build-so: src/parser.c
-	$(ATSP_TASKS)/build-so
+	$(ATSP_TASK)/build-so
 
 # XXX: install-so for convenient invocation
 $(INSTALLED_SO_PATH) install-so: $(SO_BUILD_PATH)
-	$(ATSP_TASKS)/install-so
+	$(ATSP_TASK)/install-so
 
 .PHONY: install
 install: $(INSTALLED_SO_PATH)
@@ -135,7 +139,7 @@ install: $(INSTALLED_SO_PATH)
 .PHONY: uninstall
 .PHONY: uninstall-so
 uninstall uninstall-so:
-	$(ATSP_TASKS)/uninstall-so
+	$(ATSP_TASK)/uninstall-so
 
 ###############
 ### testing ###
@@ -143,7 +147,7 @@ uninstall uninstall-so:
 
 .PHONY: corpus-test
 corpus-test: $(INSTALLED_SO_PATH)
-	$(ATSP_TASKS)/corpus-test
+	$(ATSP_TASK)/corpus-test
 
 ###########################
 ### playground and wasm ###
@@ -151,11 +155,11 @@ corpus-test: $(INSTALLED_SO_PATH)
 
 .PHONY: playground
 playground: $(PARSER_WASM)
-	$(ATSP_TASKS)/playground
+	$(ATSP_TASK)/playground
 
 # XXX: build-wasm for convenient invocation
 $(PARSER_WASM) build-wasm: src/parser.c
-	$(ATSP_TASKS)/build-wasm
+	$(ATSP_TASK)/build-wasm
 
 ###################
 ### for cleanup ###
@@ -163,4 +167,4 @@ $(PARSER_WASM) build-wasm: src/parser.c
 
 .PHONY: clean
 clean:
-	$(ATSP_TASKS)/clean
+	$(ATSP_TASK)/clean

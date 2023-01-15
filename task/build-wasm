@@ -22,8 +22,6 @@ else
   exit 1;
 fi
 
-printf "* Invoking tree-sitter build-wasm subcommand\n"
-
 # XXX: the following may be brittle as it depends on emscripten
 #      internals.
 #
@@ -56,9 +54,26 @@ printf "* Invoking tree-sitter build-wasm subcommand\n"
 # XXX: doing the following as an experiment.  may be brittle though if
 #      emscripten changes certain things
 
-# XXX: should allow configuration of this location -- in conf perhaps?
-EMSDK=$(realpath "${PARSER_PROJ_DIR}/../emsdk")
+# XXX: old version
+#EMSDK=$(realpath "${PARSER_PROJ_DIR}/../emsdk")
+# try getting a value from conf file
+EMSDK=${EMSDK:-"$("${ATSP_UTIL}"/emsdk-path)"}
+# if still empty, default to sibling of grammar repository?
+EMSDK=${EMSDK:-"${PARSER_PROJ_DIR}/../emsdk"}
+
+# XXX: check if still empty and bail if so?
+if [ "" = "${EMSDK}" ]; then
+ printf "* Did not find an appropriate value for EMSDK"
+ exit 1
+fi
+
+EMSDK=$(realpath "${EMSDK}")
+
+# XXX: any sanity checking?  could check for ${EMSDK}/node
+printf "* EMSDK: %s\n" "${EMSDK}"
+
 EMSCRIPTEN="${EMSDK}/upstream/emscripten"
+
 # XXX: is there a guarantee that this will yield a single value?
 # XXX: validate NODE_VERSION value somehow?
 NODE_VERSION=$(ls "${EMSDK}/node")
@@ -69,6 +84,8 @@ EMSDK_NODE="${NODE_BIN_DIR_PATH}/node"
 export EMSDK="${EMSDK}"
 export EMSDK_NODE="${EMSDK_NODE}"
 export PATH="${EMSDK}:${EMSCRIPTEN}:${NODE_BIN_DIR_PATH}:${PATH}"
+
+printf "* Invoking tree-sitter build-wasm subcommand\n"
 
 # XXX: possibly need to make TREE_SITTER_DIR / TREE_SITTER_LIBDIR
 #      available via export?

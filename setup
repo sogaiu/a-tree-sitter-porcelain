@@ -1,13 +1,17 @@
 #! /bin/sh
 
+# XXX: run this from the directory this is in
+
 # shellcheck disable=SC2034
 THIS_SCRIPT_DESC="Setup atsp"
 
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
-# shellcheck source=.common
-. "${THIS_SCRIPT_DIR}/.common"
+printf "%s\n" "${THIS_SCRIPT}"
+
+# XXX: one-time
+PARSER_PROJ_DIR=$(realpath ..)
 
 ########################################################################
 
@@ -63,8 +67,8 @@ do
 
 done
 
-# XXX: abstract out into util script?
-confpath=$(realpath "${THIS_SCRIPT_DIR}/../conf")
+# XXX: too hard-wired?
+confpath=$(realpath "${THIS_SCRIPT_DIR}/conf")
 
 printf "Ok, I gathered '%s', please ensure the following line\n" \
        "${guess}"
@@ -77,9 +81,13 @@ printf "TS_LANGUAGE=%s\n" "${guess}"
 
 printf "\n"
 
-printf "is in a file at: %s" "${confpath}"
+printf "is in a file at:\n"
 
-printf "\n\n"
+printf "\n"
+
+printf "  %s\n" "${confpath}"
+
+printf "\n"
 
 cd "${CUR_DIR}" || exit 1
 

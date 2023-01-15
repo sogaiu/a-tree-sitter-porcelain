@@ -28,7 +28,7 @@ CUR_DIR=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
-PARSER_WASM=$("${ATSP_UTILS}"/wasm-name)
+PARSER_WASM=$("${ATSP_UTIL}"/wasm-name)
 PARSER_WASM_PATH=${PARSER_PROJ_DIR}/${PARSER_WASM}
 
 if [ -f "${PARSER_WASM_PATH}" ]; then

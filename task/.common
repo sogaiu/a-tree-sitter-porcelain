@@ -12,8 +12,8 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 ATSP_ROOT=$(realpath "${THIS_SCRIPT_DIR}/..")
 
 ATSP_CONF="${ATSP_ROOT}"/conf
-ATSP_TASKS="${ATSP_ROOT}"/task
-ATSP_UTILS="${ATSP_ROOT}"/util
+ATSP_TASK="${ATSP_ROOT}"/task
+ATSP_UTIL="${ATSP_ROOT}"/util
 
 # shellcheck source=../conf
 . "${ATSP_CONF}"
@@ -46,10 +46,10 @@ TREE_SITTER_LIBDIR=${TREE_SITTER_LIBDIR:-${TREE_SITTER_DIR}/lib}
 
 # XXX: can we not just use TREE_SITTER_LIBDIR?
 # where the shared object is looked for by tree-sitter cli
-SO_INSTALL_DIR=$("${ATSP_UTILS}"/so-install-dir "${TREE_SITTER_DIR}")
+SO_INSTALL_DIR=$("${ATSP_UTIL}"/so-install-dir "${TREE_SITTER_DIR}")
 
 # path to installed shared object
-INSTALLED_SO_PATH=$("${ATSP_UTILS}"/installed-so-path "${SO_INSTALL_DIR}")
+INSTALLED_SO_PATH=$("${ATSP_UTIL}"/installed-so-path "${SO_INSTALL_DIR}")
 
 # build directory for shared object
 #

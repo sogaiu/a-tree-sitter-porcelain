@@ -54,14 +54,14 @@ fi
 # * install target depends on it
 # * INSTALLED_SO_PATH target depends on it
 # 
-SO_BUILD_PATH=$("${ATSP_UTILS}"/so-build-path "${BUILD_DIR_PATH}")
+SO_BUILD_PATH=$("${ATSP_UTIL}"/so-build-path "${BUILD_DIR_PATH}")
 
 # parser wasm file name
-PARSER_WASM=$("${ATSP_UTILS}"/wasm-name)
+PARSER_WASM=$("${ATSP_UTIL}"/wasm-name)
 # (full?) path to parser wasm file name
 PARSER_WASM_PATH=${PARSER_PROJ_DIR}/${PARSER_WASM}
 
-printf "TS_LANGUAGE: %s\n" "$("${ATSP_UTILS}"/ts-lang)"
+printf "TS_LANGUAGE: %s\n" "$("${ATSP_UTIL}"/ts-lang)"
 printf "PARSER_PROJ_DIR: %s\n" "${PARSER_PROJ_DIR}"
 echo
 printf "TS_PATH: %s\n" "${TS_PATH}"

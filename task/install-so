@@ -15,7 +15,7 @@ CUR_DIR=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
-SO_NAME=$("${ATSP_UTILS}"/so-name)
+SO_NAME=$("${ATSP_UTIL}"/so-name)
 
 if [ -f "${BUILD_DIR_PATH}/${SO_NAME}" ]; then
   printf "Found shared object, installing.\n"

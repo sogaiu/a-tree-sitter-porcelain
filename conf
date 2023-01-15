@@ -1,1 +1,4 @@
 TS_LANGUAGE=clojure
+# absolute path or relative to grammar directory
+#EMSDK=../emsdk
+ABI=13

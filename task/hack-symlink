@@ -80,7 +80,7 @@ else
   exit 0;
 fi
 
-SYS_TYPE=$("${ATSP_UTILS}"/sys-type)
+SYS_TYPE=$("${ATSP_UTIL}"/sys-type)
 
 printf "* Invoking ln\n"
 
