@@ -22,10 +22,14 @@ _task_names() {
   # n.b. this is literal, not globbed
   tasks="${THIS_SCRIPT_DIR}/.atsp/task/*"
 
+  task_names=
+
   for task in ${tasks}
   do
-    COMPREPLY+=("$(basename "${task}")")
+    task_names="${task_names} $(basename "${task}")"
   done
+
+  COMPREPLY=($(compgen -W "${task_names}" "${COMP_WORDS[1]}"))
 }
 
 complete -F _task_names atsp
