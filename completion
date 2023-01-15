@@ -34,7 +34,13 @@ _task_names() {
     task_names="${task_names} $(basename "${task}")"
   done
 
-  COMPREPLY=($(compgen -W "${task_names}" "${COMP_WORDS[1]}"))
+  COMPREPLY=()
+
+  # avoid sc 2207
+  for item in $(compgen -W "${task_names}" "${COMP_WORDS[1]}")
+  do
+    COMPREPLY+=("${item}")
+  done
 }
 
 complete -F _task_names atsp
