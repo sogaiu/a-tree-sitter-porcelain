@@ -1,0 +1,86 @@
+#! /bin/sh
+
+# shellcheck disable=SC2034
+THIS_SCRIPT_DESC="Setup atsp"
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+
+# shellcheck source=.common
+. "${THIS_SCRIPT_DIR}/.common"
+
+########################################################################
+
+CUR_DIR=$(pwd)
+
+cd "${PARSER_PROJ_DIR}" || exit 1
+
+GRAMMAR_JS_LINE=$(grep '^\s*name:\s*' "${PARSER_PROJ_DIR}"/grammar.js)
+
+guess=$(echo "${GRAMMAR_JS_LINE}" | \
+        sed "s/\s*name:\s*'\([^']\+\)',/\1/")
+
+#printf "1: %s\n" "${guess}"
+
+if [ "${GRAMMAR_JS_LINE}" != "${guess}" ]; then
+  TS_LANG_NAME_GUESS="${guess}"
+else
+  guess=$(echo "${GRAMMAR_JS_LINE}" | \
+          sed 's/\s*name:\s*"\([^"]\+\)",/\1/')
+fi
+
+#printf "2: %s\n" "${guess}"
+
+if [ "${GRAMMAR_JS_LINE}" != "${guess}" ]; then
+  TS_LANG_NAME_GUESS="${guess}"
+else
+  TS_LANG_NAME_GUESS=$(basename "${PARSER_PROJ_DIR}" | \
+                       sed 's/tree-sitter-//' | \
+                       sed 's/\([^\.]\+\).*/\1/')
+fi
+
+#printf "3: %s\n" "${TS_LANG_NAME_GUESS}"
+
+# just needs to be a string which should not be the same as a guess
+scan=no!
+
+while [ "${guess}" != "${scan}" ]
+do
+  printf "Please enter a language name [%s]: " "${TS_LANG_NAME_GUESS}"
+
+  read -r guess
+
+  guess=${guess:-"${TS_LANG_NAME_GUESS}"}
+
+  # XXX: improve sanity check -- c identifier chars and - are ok?
+  scan=$(echo "${guess}" | sed 's/[^_a-zA-Z0-9-]//')
+
+  printf "\n"
+
+  if [ "${guess}" != "${scan}" ]; then
+      printf "Please don't use anything other than: a-z, A-Z, _, and -.\n\n"
+  fi
+
+done
+
+# XXX: abstract out into util script?
+confpath=$(realpath "${THIS_SCRIPT_DIR}/../conf")
+
+printf "Ok, I gathered '%s', please ensure the following line\n" \
+       "${guess}"
+
+printf "(or an appropriately corrected version of it):\n"
+
+printf "\n"
+
+printf "TS_LANGUAGE=%s\n" "${guess}"
+
+printf "\n"
+
+printf "is in a file at: %s" "${confpath}"
+
+printf "\n\n"
+
+cd "${CUR_DIR}" || exit 1
+
+printf "Done\n"

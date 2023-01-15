@@ -1,0 +1,98 @@
+#! /bin/sh
+
+# shellcheck disable=SC2034
+THIS_SCRIPT_DESC="Create symlink to help constrain tree-sitter scanning"
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+
+# shellcheck source=.common
+. "${THIS_SCRIPT_DIR}/.common"
+
+########################################################################
+
+CUR_DIR=$(pwd)
+
+cd "${PARSER_PROJ_DIR}" || exit 1
+
+# XXX: various tree-sitter subcommands can lead to scanning of
+#      directories looking for grammar directories that can have their
+#      content automatically compiled and made accessible to
+#      tree-sitter.  there may be more than one problem with this
+#      functionality, but one clear problem is that it can lead to
+#      different versions of the same language's grammar having .so
+#      files be used by tree-sitter.  this can be confusing during
+#      testing or otherwise interpreting the results of tree-sitter
+#      subcommands.
+#
+#      there doesn't appear to be a nice way to turn off this scanning
+#      behavior nor a way to explicitly tell tree-sitter to use one
+#      specific .so or perhaps to only use specifically one grammar.
+#
+#      there is a way to work around this provided one only executes
+#      tree-sitter subcommands in the top level of one's grammar
+#      directory, but it requires an as yet unreleased tree-sitter
+#      that has TREE_SITTER_LIBDIR functionality built in.  the
+#      release after 0.20.7 may end up having this.
+#
+#      in any case, the steps to set this up are:
+#
+#      1. create symlink in grammar directory with a name that starts
+#         with tree-sitter- and have it point to "." (no quotes).
+#         it's likely less confusing to name the link
+#         "tree-sitter-<name>" where <name> refers to the language for
+#         the grammar as it will appear in output for at least one
+#         tree-sitter subcommand.
+#
+#      2. create a .tree-sitter subdirectory in the grammar directory
+#
+#      3. arrange for the TREE_SITTER_DIR env var to point at the
+#         .tree-sitter subdirectory.
+#
+#      4. put a config.json file in the aforementioned .tree-sitter
+#         directory.
+#
+#      5. put an entry for "parser-directories" (an array or list)
+#         that has a single element "."  (yes quotes this time).  so
+#         the file might contain:
+#
+#         {
+#           "parser-directories": [
+#             "."
+#           ]
+#         }
+#
+#      run `tree-sitter dump-languages` to verify which gramamars are
+#      recognized and how many there are.
+#
+#      the goal is to have one and have it be the current one.
+LINK_NAME=tree-sitter-${TS_LANGUAGE}
+
+# XXX: was used for the dump script
+#HACK_LINK=$(ls -d "${LINK_NAME}" 2> /dev/null || printf "None")
+#HACK_LINK_DEREF=$(readlink "${LINK_NAME}" 2> /dev/null || printf "None")
+
+if [ ! -e "${LINK_NAME}" ]; then
+  printf "Work-around symlink not found so creating it.\n"
+else
+  printf "Found work-around symlink, exiting.\n"
+  printf "Done\n"
+  exit 0;
+fi
+
+SYS_TYPE=$("${ATSP_UTILS}"/sys-type)
+
+printf "* Invoking ln\n"
+
+# for msys2 / mingw64, need env var MSYS to be set to winsymlinks:nativestrict
+# from some version of windows 10 and beyond(?), setting up developer mode
+# allows use of symlinks
+if [ "${SYS_TYPE}" = "MINGW64" ]; then
+  MSYS=winsymlinks:nativestrict ln -sf . "${LINK_NAME}"
+else
+  ln -sf . "${LINK_NAME}"
+fi
+
+cd "${CUR_DIR}" || exit 1
+
+printf "Done\n"

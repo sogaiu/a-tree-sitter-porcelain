@@ -1,0 +1,10 @@
+#! /bin/sh
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+
+########################################################################
+
+SO_NAME=$("${THIS_SCRIPT_DIR}"/so-name)
+
+echo "$1/${SO_NAME}"

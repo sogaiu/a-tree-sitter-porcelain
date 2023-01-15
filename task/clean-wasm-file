@@ -1,0 +1,27 @@
+#! /bin/sh
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+
+# shellcheck source=.common
+. "${THIS_SCRIPT_DIR}/.common"
+
+########################################################################
+
+CUR_DIR=$(pwd)
+
+cd "${PARSER_PROJ_DIR}" || exit 1
+
+if [ $# -eq 0 ]; then
+  printf "Cleaning wasm file\n"
+fi
+
+PARSER_WASM=$("${ATSP_UTILS}"/wasm-name)
+
+rm -f "${PARSER_WASM}"
+
+cd "${CUR_DIR}" || exit 1
+
+if [ $# -eq 0 ]; then
+  printf "Done\n"
+fi

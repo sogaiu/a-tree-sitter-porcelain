@@ -1,0 +1,23 @@
+#! /bin/sh
+
+# XXX: use sys-type util script?
+
+uname_s=$(uname -s)
+
+case ${uname_s} in
+    Linux)
+        SO_EXT=so
+        ;;
+    Darwin)
+        SO_EXT=dylib
+        ;;
+    MINGW64*)
+        SO_EXT=dll
+        ;;
+    *)
+        # XXX: warn?
+        SO_EXT=so
+        ;;
+esac
+
+echo "${SO_EXT}"

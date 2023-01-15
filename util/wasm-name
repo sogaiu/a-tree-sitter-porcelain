@@ -1,0 +1,12 @@
+#! /bin/sh
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+
+########################################################################
+
+TS_LANGUAGE=$("${THIS_SCRIPT_DIR}"/ts-lang)
+
+underscore_name=$(echo "${TS_LANGUAGE}" | tr '-' '_')
+
+echo tree-sitter-"${underscore_name}".wasm

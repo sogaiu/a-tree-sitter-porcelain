@@ -1,0 +1,88 @@
+#! /bin/sh
+
+# shellcheck disable=SC2034
+THIS_SCRIPT_DESC="Create tree-sitter config.json if it doesn't exist"
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+
+# shellcheck source=.common
+. "${THIS_SCRIPT_DIR}/.common"
+
+########################################################################
+
+CUR_DIR=$(pwd)
+
+cd "${PARSER_PROJ_DIR}" || exit 1
+
+CONFIG_JSON="${TREE_SITTER_DIR}"/config.json
+
+if [ ! -e "${CONFIG_JSON}" ]; then
+  printf "Creating config.json under:\n  %s\n" "${TREE_SITTER_DIR}/"
+
+  mkdir -p "${TREE_SITTER_DIR}"
+
+  cat << EOF > "${CONFIG_JSON}"
+{
+  "parser-directories": [
+    "."
+  ],
+  "theme": {
+    "number": {
+      "color": 94,
+      "bold": true
+    },
+    "string.special": 30,
+    "keyword": 56,
+    "operator": {
+      "bold": true,
+      "color": 239
+    },
+    "module": 136,
+    "variable.builtin": {
+      "bold": true
+    },
+    "type.builtin": {
+      "color": 23,
+      "bold": true
+    },
+    "type": 23,
+    "constant": 94,
+    "punctuation.delimiter": 239,
+    "tag": 18,
+    "string": 28,
+    "embedded": null,
+    "variable.parameter": {
+      "underline": true
+    },
+    "comment": {
+      "color": 245,
+      "italic": true
+    },
+    "attribute": {
+      "color": 124,
+      "italic": true
+    },
+    "constructor": 136,
+    "function.builtin": {
+      "bold": true,
+      "color": 26
+    },
+    "property": 124,
+    "constant.builtin": {
+      "color": 94,
+      "bold": true
+    },
+    "punctuation.bracket": 239,
+    "function": 26
+  }
+}
+EOF
+else
+  printf "The file config.json already exists under:\n  %s\n" \
+         "${TREE_SITTER_DIR}/"
+fi
+
+cd "${CUR_DIR}" || exit 1
+
+printf "Done\n"

@@ -1,0 +1,80 @@
+#! /bin/sh
+
+# shellcheck disable=SC2034
+THIS_SCRIPT_DESC="Build a .wasm file for a grammar"
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+
+# shellcheck source=.common
+. "${THIS_SCRIPT_DIR}/.common"
+
+########################################################################
+
+CUR_DIR=$(pwd)
+
+cd "${PARSER_PROJ_DIR}" || exit 1
+
+if [ -f src/parser.c ]; then
+  printf "Found src/parser.c, building parser wasm.\n"
+else
+  printf "Failed to find src/parser.c...exiting\n"
+  exit 1;
+fi
+
+printf "* Invoking tree-sitter build-wasm subcommand\n"
+
+# XXX: the following may be brittle as it depends on emscripten
+#      internals.
+#
+#      observing the output of running emsdk_env.* should indicate
+#      which environment variables are expected to have which
+#      particular values so if the following breaks, the
+#      aforementioned output could be one place to look for clues.
+#
+# XXX: not sure how to integrate emsdk_env.sh...
+#
+#      might not be possble because one needs to . or source it?
+#
+#        https://lists.gnu.org/archive/html/help-make/2006-04/msg00142.html
+#
+#      the output of sourcing displays which env vars are set and what
+#      they are set to.  a hack would be to capture and parse that output?
+#      some attempts at this failed -- "source" doesn't work via
+#      $(shell ,,,) and "." didn't work out for different reasons
+#
+#      running EMSDK_QUIET=1 python ~/src/emsdk/emsdk.py construct_env
+#      produces output of the form:
+#
+#        export PATH="...";
+#        export EMSDK="...";
+#        export EMSDK_NODE="...";
+#        unset EMSDK_QUIET;
+#
+#      possibly that could be parsed...but seems like a lot of work
+
+# XXX: doing the following as an experiment.  may be brittle though if
+#      emscripten changes certain things
+
+# XXX: should allow configuration of this location -- in conf perhaps?
+EMSDK=$(realpath "${PARSER_PROJ_DIR}/../emsdk")
+EMSCRIPTEN="${EMSDK}/upstream/emscripten"
+# XXX: is there a guarantee that this will yield a single value?
+# XXX: validate NODE_VERSION value somehow?
+NODE_VERSION=$(ls "${EMSDK}/node")
+
+NODE_BIN_DIR_PATH="${EMSDK}/node/${NODE_VERSION}/bin"
+EMSDK_NODE="${NODE_BIN_DIR_PATH}/node"
+
+export EMSDK="${EMSDK}"
+export EMSDK_NODE="${EMSDK_NODE}"
+export PATH="${EMSDK}:${EMSCRIPTEN}:${NODE_BIN_DIR_PATH}:${PATH}"
+
+# XXX: possibly need to make TREE_SITTER_DIR / TREE_SITTER_LIBDIR
+#      available via export?
+
+${TS_PATH} build-wasm
+
+cd "${CUR_DIR}" || exit 1
+
+printf "Done\n"

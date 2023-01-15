@@ -1,0 +1,12 @@
+#! /bin/sh
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "${THIS_SCRIPT}")
+
+########################################################################
+
+MAKEFILE=$(realpath "${THIS_SCRIPT_DIR}"/../Makefile)
+
+if [ -f "${MAKEFILE}" ]; then
+   make -f "${MAKEFILE}" "$@"
+fi

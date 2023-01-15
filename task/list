@@ -1,0 +1,59 @@
+#! /bin/sh
+
+# shellcheck disable=SC2034
+THIS_SCRIPT_DESC="List tasks"
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+
+# shellcheck source=.common
+. "${THIS_SCRIPT_DIR}/.common"
+
+########################################################################
+
+CUR_DIR=$(pwd)
+
+cd "${PARSER_PROJ_DIR}" || exit 1
+
+printf "\n"
+
+# n.b. this is literal, not globbed
+tasks="${THIS_SCRIPT_DIR}/*"
+
+# determine max length of script names for readability
+max_len=0
+
+for task in ${tasks}
+do
+  cur_len=${#task}
+
+  if [ "${cur_len}" -gt "${max_len}" ]; then
+    max_len="${cur_len}"
+  fi
+done
+
+# .common is skipped because its name starts with a dot
+for task in ${tasks} # XXX: sad to be looping again...
+do
+  just_name="$(basename "${task}")"
+
+  desc=$(grep -m 1 THIS_SCRIPT_DESC "${task}" | \
+         sed 's/^THIS_SCRIPT_DESC="\(.*\)"/\1/')
+
+  # if a task has a description, list it
+  if [ "" != "${desc}" ]; then
+    pad_len=$((max_len - ${#task} + 1))
+
+    printf "%s %*s %s\n" \
+           "${just_name}" \
+           "${pad_len}" \
+           " " \
+           "${desc}"
+  fi
+done
+
+printf "\n"
+
+cd "${CUR_DIR}" || exit 1
+
+printf "Done\n"

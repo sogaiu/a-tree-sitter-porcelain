@@ -1,0 +1,21 @@
+#! /bin/sh
+
+uname_s=$(uname -s)
+
+case ${uname_s} in
+    Linux)
+        SYS_TYPE=Linux
+        ;;
+    Darwin)
+        SYS_TYPE=Darwin
+        ;;
+    MINGW64*)
+        SYS_TYPE=MINGW64
+        ;;
+    *)
+        # XXX: warn?
+        SYS_TYPE=UNKNOWN
+        ;;
+esac
+
+echo "${SYS_TYPE}"

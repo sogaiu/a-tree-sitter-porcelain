@@ -1,0 +1,14 @@
+#! /bin/sh
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+
+########################################################################
+
+# XXX: should anything be done about - vs _?
+#      wasm-name changes - to _
+TS_LANGUAGE=$("${THIS_SCRIPT_DIR}"/ts-lang)
+
+SO_EXT=$("${THIS_SCRIPT_DIR}"/so-ext)
+
+echo "${TS_LANGUAGE}.${SO_EXT}"

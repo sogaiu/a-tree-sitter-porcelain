@@ -1,0 +1,34 @@
+#! /bin/sh
+
+# shellcheck disable=SC2034
+THIS_SCRIPT_DESC="Generate grammar source under src"
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+
+# shellcheck source=.common
+. "${THIS_SCRIPT_DIR}/.common"
+
+########################################################################
+
+CUR_DIR=$(pwd)
+
+cd "${PARSER_PROJ_DIR}" || exit 1
+
+if [ -f grammar.js ]; then
+  printf "Found grammar.js, generating src/parser.c and friends.\n"
+else
+  printf "Failed to find grammar.js...exiting\n"
+  exit 1;
+fi
+
+printf "* Invoking tree-sitter generate subcommand\n"
+
+# XXX: tree-sitter creates src directory if necessary
+
+# XXX: abstract out ABI number?
+${TS_PATH} generate --abi 13 --no-bindings
+
+cd "${CUR_DIR}" || exit 1
+
+printf "Done\n"

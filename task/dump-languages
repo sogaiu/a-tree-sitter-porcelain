@@ -1,0 +1,56 @@
+#! /bin/sh
+
+# shellcheck disable=SC2034
+THIS_SCRIPT_DESC="Run tree-sitter dump-languages subcommand"
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+
+# shellcheck source=.common
+. "${THIS_SCRIPT_DIR}/.common"
+
+########################################################################
+
+CUR_DIR=$(pwd)
+
+cd "${PARSER_PROJ_DIR}" || exit 1
+
+# XXX: is this a broken way to do things?
+if [ "" != "${TREE_SITTER_DIR}" ]; then
+  export TREE_SITTER_DIR="${TREE_SITTER_DIR}"
+fi
+
+${TS_PATH} dump-languages
+
+# XXX: could try to capture above output and analyze
+#      to decide what to display below...
+cat <<EOF
+**********************************************************
+** If the above output suggests running the init-config **
+** subcommand, carefully consider whether to do so.     **
+**                                                      **
+** It probably means tree-sitter is looking in the      **
+** wrong location for config.json.                      **
+**                                                      **
+** You might want to set the TREE_SITTER_DIR            **
+** environment variable to point at the .tree-sitter    **
+** directory in this grammar repository's root          **
+** directory and try again.                             **
+**********************************************************
+
+If tree-sitter dump-languages shows info about more
+than one language, be careful while interpreting output
+from tree-sitter subcommands.  The shared object used by
+tree-sitter for processing may be different from what you
+might be expecting.
+
+If tree-sitter dump-languages shows no languages, then it
+may be time to investigate.  It may be a sign that
+the tree-sitter cli isn't finding any shared objects or
+it hasn't found an appropriate config.json file.
+
+EOF
+
+cd "${CUR_DIR}" || exit 1
+
+printf "Done\n"

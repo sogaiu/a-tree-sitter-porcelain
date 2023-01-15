@@ -1,0 +1,31 @@
+#! /bin/sh
+
+# shellcheck disable=SC2034
+THIS_SCRIPT_DESC="Clean all built artifacts"
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+
+# shellcheck source=.common
+. "${THIS_SCRIPT_DIR}/.common"
+
+########################################################################
+
+CUR_DIR=$(pwd)
+
+cd "${PARSER_PROJ_DIR}" || exit 1
+
+printf "Cleaning\n"
+
+printf "* Generated source\n"
+"${THIS_SCRIPT_DIR}"/clean-gen-src 1
+
+printf "* Build directory\n"
+"${THIS_SCRIPT_DIR}"/clean-build-dir 1
+
+printf "* Wasm file\n"
+"${THIS_SCRIPT_DIR}"/clean-wasm-file 1
+
+cd "${CUR_DIR}" || exit 1
+
+printf "Done\n"

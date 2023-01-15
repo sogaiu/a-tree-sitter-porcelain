@@ -1,0 +1,35 @@
+#! /bin/sh
+
+# shellcheck disable=SC2034
+THIS_SCRIPT_DESC="Uninstall grammar's shared object"
+
+THIS_SCRIPT=$(readlink -f "$0")
+THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+
+# shellcheck source=.common
+. "${THIS_SCRIPT_DIR}/.common"
+
+########################################################################
+
+CUR_DIR=$(pwd)
+
+cd "${PARSER_PROJ_DIR}" || exit 1
+
+printf "Looking for shared object at:\n"
+printf "  %s\n" "${INSTALLED_SO_PATH}"
+
+if [ -f "${INSTALLED_SO_PATH}" ]; then
+  printf "* Found it\n"
+else
+  printf "* Didn't find it\n"
+  # XXX
+  exit 1;
+fi
+
+printf "* Removing installed shared object\n"
+
+rm -rf "${INSTALLED_SO_PATH}"
+
+cd "${CUR_DIR}" || exit 1
+
+printf "Done\n"
