@@ -11,10 +11,13 @@ Really early :)
 ```
 # assuming there's an existing grammar repository under ~/src
 cd ~/src
-cd tree-sitter-<your-lang>
+cd tree-sitter-<lang-name>
 
 # clone as .atsp inside the grammar repository
 git clone https://github.com/sogaiu/a-tree-sitter-helper .atsp
+
+# ensure .astp/conf has a line in it like: TS_LANGUAGE=<lang-name>
+$EDITOR .atsp/conf
 
 # need this to put `atsp` command on PATH
 export PATH=$(pwd)/.atsp/bin:$PATH

@@ -1,4 +1,8 @@
-TS_LANGUAGE=clojure
+# grammar language identifier
+#TS_LANGUAGE=
+
 # absolute path or relative to grammar directory
 #EMSDK=../emsdk
+
+# affects tree-sitter generate subcommand
 ABI=13
