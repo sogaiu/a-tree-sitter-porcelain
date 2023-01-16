@@ -6,29 +6,6 @@ A hackable porcelain for tree-sitter grammar-related tasks.
 
 Really early :)
 
-## Setup
-
-```
-# assuming there's an existing grammar repository under ~/src
-cd ~/src
-cd tree-sitter-<lang-name>
-
-# clone as .atsp inside the grammar repository
-git clone https://github.com/sogaiu/a-tree-sitter-helper .atsp
-
-# ensure .astp/conf has a line in it like: TS_LANGUAGE=<lang-name>
-$EDITOR .atsp/conf
-
-# need this to put `atsp` command on PATH
-export PATH=$(pwd)/.atsp/bin:$PATH
-
-# optionally setup bash completion
-source .atsp/completion
-
-# see a list of subcommands
-atsp list
-```
-
 ## Idea
 
 Use portions of `tree-sitter` which work in your situation, but
@@ -67,6 +44,29 @@ Some things that seem achievable:
   churn](https://github.com/sogaiu/tree-sitter-clojure/pull/26#issuecomment-1186136996)
 
 * Investigate / debug problems in scripts instead of binaries
+
+## Setup
+
+```
+# assuming there's an existing grammar repository under ~/src
+cd ~/src
+cd tree-sitter-<lang-name>
+
+# clone as .atsp inside the grammar repository
+git clone https://github.com/sogaiu/a-tree-sitter-helper .atsp
+
+# ensure .astp/conf has a line in it like: TS_LANGUAGE=<lang-name>
+$EDITOR .atsp/conf
+
+# need this to put `atsp` command on PATH
+export PATH=$(pwd)/.atsp/bin:$PATH
+
+# optionally setup bash completion
+source .atsp/completion
+
+# see a list of subcommands
+atsp list
+```
 
 ## What's In Here
 
