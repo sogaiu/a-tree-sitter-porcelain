@@ -56,10 +56,11 @@ fi
 
 # XXX: old version
 #EMSDK=$(realpath "${PARSER_PROJ_DIR}/../emsdk")
+
+### start duplication
+
 # try getting a value from conf file
 EMSDK=${EMSDK:-"$("${ATSP_UTIL}"/emsdk-path)"}
-# if still empty, default to sibling of grammar repository?
-EMSDK=${EMSDK:-"${PARSER_PROJ_DIR}/../emsdk"}
 
 if [ "" = "${EMSDK}" ]; then
  printf "* Did not find an appropriate value for EMSDK"
@@ -83,6 +84,8 @@ if [ ! -d "${EMSDK}/node" ]; then
   printf "* EMSDK directory doesn't look right: %s\n" "${EMSDK}"
   exit 1
 fi
+
+### end duplication
 
 EMSCRIPTEN="${EMSDK}/upstream/emscripten"
 
