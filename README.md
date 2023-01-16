@@ -44,20 +44,29 @@ Some things that seem achievable:
   * Include additional files (e.g. scanner-related)
     ([#1262](https://github.com/tree-sitter/tree-sitter/issues/1262))
 
+* Alternative methods (non-Node.js) of generating `src/parser.c`:
+  * Using quickjs to generate `grammar.json` from `grammar.js`:
+  ([comment @ #465](https://github.com/tree-sitter/tree-sitter/issues/465#issuecomment-1371911897))
+  * Feed `grammar.json` to `generate` subcommand:
+  ([comment @ #1413](https://github.com/tree-sitter/tree-sitter/discussions/1413#discussioncomment-1414650))
+
+* Customize playground
+  * Color blind mode for playground
+  ([#1714](https://github.com/tree-sitter/tree-sitter/issues/1714))
+  * Rename query to highlighting
+  ([#1305](https://github.com/tree-sitter/tree-sitter/issues/1305))
+  ([#1495](https://github.com/tree-sitter/tree-sitter/pull/1495))
+  * Playground with multiple languages
+  ([#1777](https://github.com/tree-sitter/tree-sitter/discussions/1777))
+
 * Customizing building of `.wasm` files when investigating Emscripten
   breakage
   ([#1829](https://github.com/tree-sitter/tree-sitter/issues/1829))
 
-* Customize playground
-
-* Investigate / debug problems in scripts instead of binaries
-
-* Use alternate JavaScript runtime to generate `grammar.json` from
-  `grammar.js`
-  ([#465](https://github.com/tree-sitter/tree-sitter/issues/465))
-
 * Reduce / eliminate usage of `npm` to [avoid unnecessary
   churn](https://github.com/sogaiu/tree-sitter-clojure/pull/26#issuecomment-1186136996)
+
+* Investigate / debug problems in scripts instead of binaries
 
 ## What's In Here
 
