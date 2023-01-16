@@ -1,3 +1,14 @@
 #! /bin/sh
 
+# typically used to fetch first thing in a file (typically conf) that
+# looks like:
+#
+#   <NAME>=<VALUE>
+#
+# a specific example is:
+#
+#   TS_LANGUAGE=clojure
+#
+# stderr output is discarded
+
 grep "$2" "$1" | cut -d= -f2 | head -n 1 2> /dev/null
