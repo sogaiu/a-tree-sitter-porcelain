@@ -41,6 +41,8 @@ Some things that seem achievable:
     ([#1835](https://github.com/tree-sitter/tree-sitter/pull/1835))
   * Different flags for building
     ([#1518](https://github.com/tree-sitter/tree-sitter/issues/1518))
+  * Include additional files (e.g. scanner-related)
+    ([#1262](https://github.com/tree-sitter/tree-sitter/issues/1262))
 
 * Customizing building of `.wasm` files when investigating Emscripten
   breakage
