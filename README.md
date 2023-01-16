@@ -121,13 +121,6 @@ _N.B._ It assumes `make` is invoked from the root of the grammar
 repository (usually by the wrapper script).  Execution from
 elsewhere may not yield proper behavior.
 
-## Why No File Extensions?
-
-The scripts' names do not have file extensions deliberately:
-
-* An alternative language might be used to implement a task script
-* Might lead to a nicer arrangement on Windows
-
 ## Linting Shell Scripts
 
 To lint, run `shellcheck -x <name>` on the shell files in `task`
