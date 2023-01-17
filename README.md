@@ -55,7 +55,7 @@ cd tree-sitter-<lang-name>
 # clone as .atsp inside the grammar repository
 git clone https://github.com/sogaiu/a-tree-sitter-helper .atsp
 
-# ensure .astp/conf has a line in it like: TS_LANGUAGE=<lang-name>
+# ensure .astp/conf has a line in it like: ATSP_LANG=<lang-name>
 $EDITOR .atsp/conf
 
 # need this to put `atsp` command on PATH
@@ -87,7 +87,7 @@ conveniently available for use.
 The `conf` file is meant to contain just lines that look like:
 
 ```
-TS_LANGUAGE=clojure
+ATSP_LANG=clojure
 ```
 
 Other values that can be configured include:

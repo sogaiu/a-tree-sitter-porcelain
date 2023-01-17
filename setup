@@ -77,7 +77,7 @@ printf "(or an appropriately corrected version of it):\n"
 
 printf "\n"
 
-printf "TS_LANGUAGE=%s\n" "${guess}"
+printf "ATSP_LANG=%s\n" "${guess}"
 
 printf "\n"
 

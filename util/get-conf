@@ -7,8 +7,8 @@
 #
 # a specific example is:
 #
-#   TS_LANGUAGE=clojure
+#   ATSP_LANG=clojure
 #
 # stderr output is discarded
 
-grep "$2" "$1" | cut -d= -f2 | head -n 1 2> /dev/null
+grep -e "^$2=" "$1" | cut -d= -f2 | head -n 1 2> /dev/null

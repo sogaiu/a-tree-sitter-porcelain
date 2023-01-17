@@ -20,7 +20,7 @@ if [ "" != "${TREE_SITTER_DIR}" ]; then
   export TREE_SITTER_DIR="${TREE_SITTER_DIR}"
 fi
 
-${TS_PATH} dump-languages
+${ATSP_TS_PATH} dump-languages
 
 # XXX: could try to capture above output and analyze
 #      to decide what to display below...
@@ -48,6 +48,8 @@ If tree-sitter dump-languages shows no languages, then it
 may be time to investigate.  It may be a sign that
 the tree-sitter cli isn't finding any shared objects or
 it hasn't found an appropriate config.json file.
+
+The atsp hack-symlink subcommand might be help too.
 
 EOF
 

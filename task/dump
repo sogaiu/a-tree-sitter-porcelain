@@ -50,13 +50,13 @@ PARSER_WASM=$("${ATSP_UTIL}"/wasm-name)
 # (full?) path to parser wasm file name
 PARSER_WASM_PATH=${PARSER_PROJ_DIR}/${PARSER_WASM}
 
-printf "TS_LANGUAGE: %s\n" "$("${ATSP_UTIL}"/ts-lang)"
+# XXX: should be set via .common via conf (required in conf)
+#printf "ATSP_LANG: %s\n" "$("${ATSP_UTIL}"/atsp-lang)"
+printf "ATSP_LANG: %s\n" "${ATSP_LANG}"
 printf "PARSER_PROJ_DIR: %s\n" "${PARSER_PROJ_DIR}"
 echo
-printf "TS_PATH: %s\n" "${TS_PATH}"
+printf "ATSP_TS_PATH: %s\n" "${ATSP_TS_PATH}"
 echo
-printf "TS_VERSION: %s\n" "${TS_VERSION}"
-printf "TS_COMMIT: %s\n" "${TS_COMMIT}"
 printf "MIN_VERSION: %s\n" "${MIN_VERSION}"
 echo
 printf "OLD_TREE_SITTER_DIR: %s\n" "${OLD_TREE_SITTER_DIR}"

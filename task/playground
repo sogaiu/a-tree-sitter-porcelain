@@ -40,7 +40,7 @@ fi
 
 printf "* Invoking tree-sitter playground subcommand\n"
 
-${TS_PATH} playground
+${ATSP_TS_PATH} playground
 
 cd "${cur_dir}" || exit 1
 

@@ -23,6 +23,15 @@ PARSER_PROJ_DIR=$(realpath "$THIS_SCRIPT_DIR"/../..)
 
 ########################################################################
 
+# XXX: it may be that this file needs to protect against certain
+#      variables not having values.  specifically, those that are in
+#      the conf file?
+#
+#      e.g. if ATSP_LANG is not set, then hack-symlink will create an
+#      incorrect symlink
+
+########################################################################
+
 # path to tree-sitter cli binary
 #
 # >= 0.19.4 added --no-bindings
@@ -32,7 +41,7 @@ PARSER_PROJ_DIR=$(realpath "$THIS_SCRIPT_DIR"/../..)
 # XXX: note that version string from binary may not be a good way to
 #      compare versions because unreleased things appear to use the
 #      same version string
-TS_PATH=${TS_PATH:-tree-sitter}
+ATSP_TS_PATH=${ATSP_TS_PATH:-tree-sitter}
 
 TREE_SITTER_DIR=${TREE_SITTER_DIR:-${PARSER_PROJ_DIR}/.tree-sitter}
 

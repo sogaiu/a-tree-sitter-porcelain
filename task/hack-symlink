@@ -66,7 +66,13 @@ cd "${PARSER_PROJ_DIR}" || exit 1
 #      recognized and how many there are.
 #
 #      the goal is to have one and have it be the current one.
-LINK_NAME=tree-sitter-${TS_LANGUAGE}
+
+if [ "" = "${ATSP_LANG}" ]; then
+  printf "Expected ATSP_LANG to be set but did not, exiting.\n"
+  exit 1
+fi
+
+LINK_NAME=tree-sitter-${ATSP_LANG}
 
 # XXX: was used for the dump script
 #HACK_LINK=$(ls -d "${LINK_NAME}" 2> /dev/null || printf "None")
@@ -77,7 +83,7 @@ if [ ! -e "${LINK_NAME}" ]; then
 else
   printf "Found work-around symlink, exiting.\n"
   printf "Done\n"
-  exit 0;
+  exit 0
 fi
 
 SYS_TYPE=$("${ATSP_UTIL}"/sys-type)

@@ -25,21 +25,21 @@ printf "tree-sitter\n"
 
 printf "\n"
 
-if [ "" = "${TS_PATH}" ]; then
-  printf "* TS_PATH not set."
+if [ "" = "${ATSP_TS_PATH}" ]; then
+  printf "* ATSP_TS_PATH not set."
   exit 1
 fi
 
 # XXX: is this correct?
-if [ ! -e "$(realpath "${TS_PATH}")" ] && \
-   [ "" = "$(which "${TS_PATH}")" ]; then
-  printf "* cli not found at: %s\n" "${TS_PATH}"
+if [ ! -e "$(realpath "${ATSP_TS_PATH}")" ] && \
+   [ "" = "$(which "${ATSP_TS_PATH}")" ]; then
+  printf "* cli not found at: %s\n" "${ATSP_TS_PATH}"
   exit 1
 fi
 
 printf "* Located binary\n"
 
-printf "* TS_PATH: %s\n" "${TS_PATH}"
+printf "* ATSP_TS_PATH: %s\n" "${ATSP_TS_PATH}"
 
 # example tree-sitter --version output:
 #
@@ -48,9 +48,9 @@ printf "* TS_PATH: %s\n" "${TS_PATH}"
 #   1           2      3
 #
 # so split on spaces and take the 2nd and 3rd fields
-printf "* version: %s\n" "$($TS_PATH --version | cut -d' ' -f2)"
+printf "* version: %s\n" "$($ATSP_TS_PATH --version | cut -d' ' -f2)"
 # also remove surrounding parens -- otherwise can interfere with things
-printf "* commit: %s\n" "$($TS_PATH --version | cut -d' ' -f3 | tr -d '()')"
+printf "* commit: %s\n" "$($ATSP_TS_PATH --version | cut -d' ' -f3 | tr -d '()')"
 
 printf "\n"
 
@@ -65,10 +65,10 @@ printf "\n"
 ### start duplication
 
 # try getting a value from conf file
-emsdk=${ATSP_EMSDK:-"$("${ATSP_UTIL}"/emsdk-path)"}
+emsdk=${ATSP_EMSDK:-"$("${ATSP_UTIL}"/atsp-emsdk)"}
 
 if [ "" = "${emsdk}" ]; then
- printf "* Did not find an appropriate value for emsdk directory"
+ printf "* Did not find an appropriate value for emsdk directory\n"
  exit 1
 fi
 

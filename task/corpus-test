@@ -35,7 +35,7 @@ if [ "" != "${TREE_SITTER_LIBDIR}" ]; then
   export TREE_SITTER_LIBDIR="${TREE_SITTER_LIBDIR}"
 fi
 
-${TS_PATH} test
+${ATSP_TS_PATH} test
 
 cd "${cur_dir}" || exit 1
 

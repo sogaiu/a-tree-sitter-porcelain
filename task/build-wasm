@@ -54,16 +54,13 @@ fi
 # XXX: doing the following as an experiment.  may be brittle though if
 #      emscripten changes certain things
 
-# XXX: old version
-#EMSDK=$(realpath "${PARSER_PROJ_DIR}/../emsdk")
-
 ### start duplication
 
 # try getting a value from conf file
-emsdk=${ATSP_EMSDK:-"$("${ATSP_UTIL}"/emsdk-path)"}
+emsdk=${ATSP_EMSDK:-"$("${ATSP_UTIL}"/atsp-emsdk)"}
 
 if [ "" = "${emsdk}" ]; then
- printf "* Did not find an appropriate value for emsdk directory"
+ printf "* Did not find an appropriate value for emsdk directory\n"
  exit 1
 fi
 
@@ -106,7 +103,7 @@ printf "* Invoking tree-sitter build-wasm subcommand\n"
 #      available via export?  don't think so as those are only
 #      necessary for parsing-like activities?
 
-${TS_PATH} build-wasm
+${ATSP_TS_PATH} build-wasm
 
 cd "${cur_dir}" || exit 1
 

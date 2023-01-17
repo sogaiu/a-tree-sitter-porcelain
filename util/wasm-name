@@ -5,8 +5,8 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 ########################################################################
 
-TS_LANGUAGE=$("${THIS_SCRIPT_DIR}"/ts-lang)
+lang=$("${THIS_SCRIPT_DIR}"/atsp-lang)
 
-underscore_name=$(echo "${TS_LANGUAGE}" | tr '-' '_')
+underscore_name=$(echo "${lang}" | tr '-' '_')
 
 echo tree-sitter-"${underscore_name}".wasm

@@ -74,13 +74,13 @@ TREE_SITTER_LIBDIR ?= $(TREE_SITTER_DIR)/lib
 export TREE_SITTER_LIBDIR
 
 # XXX
-ATSP_EMSDK ?= $(shell $(ATSP_UTIL)/emsdk-path)
+ATSP_EMSDK ?= $(shell $(ATSP_UTIL)/atsp-emsdk)
 # XXX: could be a bit more selective about where to do this as it's
 #      not always relevant for each target
 export ATSP_EMSDK
 
 # XXX
-ATSP_ABI ?= $(shell $(ATSP_UTIL)/abi)
+ATSP_ABI ?= $(shell $(ATSP_UTIL)/atsp-abi)
 # XXX: could be a bit more selective about where to do this as it's
 #      not always relevant for each target
 export ATSP_ABI
