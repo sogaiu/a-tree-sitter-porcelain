@@ -5,4 +5,4 @@
 #ATSP_EMSDK=../emsdk
 
 # affects tree-sitter generate subcommand
-ABI=13
+ATSP_ABI=13

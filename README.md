@@ -92,8 +92,8 @@ TS_LANGUAGE=clojure
 
 Other values that can be configured include:
 
-* `EMSDK` - path to emsdk
-* `ABI` - ABI version for `tree-sitter generate` to use (13 is good now)
+* `ATSP_EMSDK` - path to emsdk
+* `ATSP_ABI` - ABI version for `tree-sitter generate` to use (13 is good now)
 
 ### `task`
 

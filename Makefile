@@ -80,10 +80,10 @@ ATSP_EMSDK ?= $(shell $(ATSP_UTIL)/emsdk-path)
 export ATSP_EMSDK
 
 # XXX
-TS_ABI ?= $(shell $(ATSP_UTIL)/abi)
+ATSP_ABI ?= $(shell $(ATSP_UTIL)/abi)
 # XXX: could be a bit more selective about where to do this as it's
 #      not always relevant for each target
-export TS_ABI
+export ATSP_ABI
 
 PARSER_WASM := $(shell $(ATSP_UTIL)/wasm-name)
 
