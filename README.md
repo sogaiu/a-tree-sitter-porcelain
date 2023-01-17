@@ -53,7 +53,7 @@ cd ~/src
 cd tree-sitter-<lang-name>
 
 # clone as .atsp inside the grammar repository
-git clone https://github.com/sogaiu/a-tree-sitter-helper .atsp
+git clone https://github.com/sogaiu/a-tree-sitter-porcelain .atsp
 
 # ensure .astp/conf has a line in it like: ATSP_LANG=<lang-name>
 $EDITOR .atsp/conf
