@@ -11,7 +11,7 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 ########################################################################
 
-CUR_DIR=$(pwd)
+cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
@@ -30,6 +30,6 @@ printf "* Removing installed shared object\n"
 
 rm -rf "${INSTALLED_SO_PATH}"
 
-cd "${CUR_DIR}" || exit 1
+cd "${cur_dir}" || exit 1
 
 printf "Done\n"

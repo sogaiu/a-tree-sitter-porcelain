@@ -11,7 +11,7 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 ########################################################################
 
-CUR_DIR=$(pwd)
+cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
@@ -26,6 +26,6 @@ printf "* Build directory\n"
 printf "* Wasm file\n"
 "${THIS_SCRIPT_DIR}"/clean-wasm-file 1
 
-cd "${CUR_DIR}" || exit 1
+cd "${cur_dir}" || exit 1
 
 printf "Done\n"

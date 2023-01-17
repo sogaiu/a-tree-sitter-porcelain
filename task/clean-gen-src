@@ -8,7 +8,7 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 ########################################################################
 
-CUR_DIR=$(pwd)
+cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
@@ -20,7 +20,7 @@ rm -rf src/parser.c
 rm -rf src/grammar.json src/node-types.json
 rm -rf src/tree_sitter
 
-cd "${CUR_DIR}" || exit 1
+cd "${cur_dir}" || exit 1
 
 if [ $# -eq 0 ]; then
   printf "Done\n"

@@ -8,4 +8,4 @@ ATSP_CONF=$(realpath "${THIS_SCRIPT_DIR}"/../conf)
 
 ########################################################################
 
-"${THIS_SCRIPT_DIR}"/get-conf "${ATSP_CONF}" EMSDK
+"${THIS_SCRIPT_DIR}"/get-conf "${ATSP_CONF}" ATSP_EMSDK

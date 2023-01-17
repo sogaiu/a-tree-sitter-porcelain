@@ -11,7 +11,7 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 ########################################################################
 
-CUR_DIR=$(pwd)
+cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
@@ -97,6 +97,6 @@ printf "* To get limiting to work fully, see footnote in a comment of:\n"
 
 printf "    tree-sitter/tree-sitter#2017\n"
 
-cd "${CUR_DIR}" || exit 1
+cd "${cur_dir}" || exit 1
 
 printf "Done\n"

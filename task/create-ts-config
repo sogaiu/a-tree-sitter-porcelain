@@ -11,7 +11,7 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 ########################################################################
 
-CUR_DIR=$(pwd)
+cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
@@ -83,6 +83,6 @@ else
          "${TREE_SITTER_DIR}/"
 fi
 
-cd "${CUR_DIR}" || exit 1
+cd "${cur_dir}" || exit 1
 
 printf "Done\n"

@@ -11,7 +11,7 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 ########################################################################
 
-CUR_DIR=$(pwd)
+cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
@@ -60,45 +60,45 @@ fi
 ### start duplication
 
 # try getting a value from conf file
-EMSDK=${EMSDK:-"$("${ATSP_UTIL}"/emsdk-path)"}
+emsdk=${ATSP_EMSDK:-"$("${ATSP_UTIL}"/emsdk-path)"}
 
-if [ "" = "${EMSDK}" ]; then
- printf "* Did not find an appropriate value for EMSDK"
+if [ "" = "${emsdk}" ]; then
+ printf "* Did not find an appropriate value for emsdk directory"
  exit 1
 fi
 
-if [ ! -d "${EMSDK}" ]; then
- printf "* EMSDK value not a directory: %s\n" "${EMSDK}"
+if [ ! -d "${emsdk}" ]; then
+ printf "* emsdk value not a directory: %s\n" "${emsdk}"
  exit 1
 fi
 
-EMSDK=$(realpath "${EMSDK}")
+emsdk=$(realpath "${emsdk}")
 
-printf "* EMSDK: %s\n" "${EMSDK}"
+printf "* emsdk: %s\n" "${emsdk}"
 
 # some consistency checking
 #
 # XXX: this should work as long as emsdk_env.* keeps setting the
 #      EMSDK_NODE env var?
-if [ ! -d "${EMSDK}/node" ]; then
-  printf "* EMSDK directory doesn't look right: %s\n" "${EMSDK}"
+if [ ! -d "${emsdk}/node" ]; then
+  printf "* emsdk directory doesn't look right: %s\n" "${emsdk}"
   exit 1
 fi
 
 ### end duplication
 
-EMSCRIPTEN="${EMSDK}/upstream/emscripten"
+emscripten="${emsdk}/upstream/emscripten"
 
 # XXX: is there a guarantee that this will yield a single value?
-# XXX: validate NODE_VERSION value somehow?
-NODE_VERSION=$(ls "${EMSDK}/node")
+# XXX: validate node_version value somehow?
+node_version=$(ls "${emsdk}/node")
 
-NODE_BIN_DIR_PATH="${EMSDK}/node/${NODE_VERSION}/bin"
-EMSDK_NODE="${NODE_BIN_DIR_PATH}/node"
+node_bin_dir_path="${emsdk}/node/${node_version}/bin"
+emsdk_node="${node_bin_dir_path}/node"
 
-export EMSDK="${EMSDK}"
-export EMSDK_NODE="${EMSDK_NODE}"
-export PATH="${EMSDK}:${EMSCRIPTEN}:${NODE_BIN_DIR_PATH}:${PATH}"
+export EMSDK="${emsdk}"
+export EMSDK_NODE="${emsdk_node}"
+export PATH="${emsdk}:${emscripten}:${node_bin_dir_path}:${PATH}"
 
 printf "* Invoking tree-sitter build-wasm subcommand\n"
 
@@ -108,6 +108,6 @@ printf "* Invoking tree-sitter build-wasm subcommand\n"
 
 ${TS_PATH} build-wasm
 
-cd "${CUR_DIR}" || exit 1
+cd "${cur_dir}" || exit 1
 
 printf "Done\n"

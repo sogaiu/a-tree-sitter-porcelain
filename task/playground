@@ -24,7 +24,7 @@ cleanup () {
 
 ########################################################################
 
-CUR_DIR=$(pwd)
+cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
@@ -42,6 +42,6 @@ printf "* Invoking tree-sitter playground subcommand\n"
 
 ${TS_PATH} playground
 
-cd "${CUR_DIR}" || exit 1
+cd "${cur_dir}" || exit 1
 
 printf "Done\n"

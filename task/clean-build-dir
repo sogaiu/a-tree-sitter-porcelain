@@ -8,7 +8,7 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 ########################################################################
 
-CUR_DIR=$(pwd)
+cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
@@ -18,7 +18,7 @@ fi
 
 rm -rf "${BUILD_DIR_PATH}"
 
-cd "${CUR_DIR}" || exit 1
+cd "${cur_dir}" || exit 1
 
 if [ $# -eq 0 ]; then
   printf "Done\n"
