@@ -4,18 +4,18 @@ uname_s=$(uname -s)
 
 case ${uname_s} in
     Linux)
-        SYS_TYPE=Linux
+        sys_type=Linux
         ;;
     Darwin)
-        SYS_TYPE=Darwin
+        sys_type=Darwin
         ;;
     MINGW64*)
-        SYS_TYPE=MINGW64
+        sys_type=MINGW64
         ;;
     *)
         # XXX: warn?
-        SYS_TYPE=UNKNOWN
+        sys_type=UNKNOWN
         ;;
 esac
 
-echo "${SYS_TYPE}"
+echo "${sys_type}"

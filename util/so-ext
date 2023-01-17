@@ -6,18 +6,18 @@ uname_s=$(uname -s)
 
 case ${uname_s} in
     Linux)
-        SO_EXT=so
+        so_ext=so
         ;;
     Darwin)
-        SO_EXT=dylib
+        so_ext=dylib
         ;;
     MINGW64*)
-        SO_EXT=dll
+        so_ext=dll
         ;;
     *)
         # XXX: warn?
-        SO_EXT=so
+        so_ext=so
         ;;
 esac
 
-echo "${SO_EXT}"
+echo "${so_ext}"

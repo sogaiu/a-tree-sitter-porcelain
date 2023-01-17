@@ -10,7 +10,7 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 printf "%s\n" "${THIS_SCRIPT}"
 
-# XXX: one-time
+# XXX: one-time...should the name be lower case?
 PARSER_PROJ_DIR=$(realpath ..)
 
 ########################################################################
@@ -19,42 +19,42 @@ cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
-GRAMMAR_JS_LINE=$(grep '^\s*name:\s*' "${PARSER_PROJ_DIR}"/grammar.js)
+grammar_js_line=$(grep '^\s*name:\s*' "${PARSER_PROJ_DIR}"/grammar.js)
 
-guess=$(echo "${GRAMMAR_JS_LINE}" | \
+guess=$(echo "${grammar_js_line}" | \
         sed "s/\s*name:\s*'\([^']\+\)',/\1/")
 
 #printf "1: %s\n" "${guess}"
 
-if [ "${GRAMMAR_JS_LINE}" != "${guess}" ]; then
-  TS_LANG_NAME_GUESS="${guess}"
+if [ "${grammar_js_line}" != "${guess}" ]; then
+  atsp_lang_guess="${guess}"
 else
-  guess=$(echo "${GRAMMAR_JS_LINE}" | \
+  guess=$(echo "${grammar_js_line}" | \
           sed 's/\s*name:\s*"\([^"]\+\)",/\1/')
 fi
 
 #printf "2: %s\n" "${guess}"
 
-if [ "${GRAMMAR_JS_LINE}" != "${guess}" ]; then
-  TS_LANG_NAME_GUESS="${guess}"
+if [ "${grammar_js_line}" != "${guess}" ]; then
+  atsp_lang_guess="${guess}"
 else
-  TS_LANG_NAME_GUESS=$(basename "${PARSER_PROJ_DIR}" | \
-                       sed 's/tree-sitter-//' | \
-                       sed 's/\([^\.]\+\).*/\1/')
+  atsp_lang_guess=$(basename "${PARSER_PROJ_DIR}" | \
+                    sed 's/tree-sitter-//' | \
+                    sed 's/\([^\.]\+\).*/\1/')
 fi
 
-#printf "3: %s\n" "${TS_LANG_NAME_GUESS}"
+#printf "3: %s\n" "${atsp_lang_guess}"
 
 # just needs to be a string which should not be the same as a guess
 scan=no!
 
 while [ "${guess}" != "${scan}" ]
 do
-  printf "Please enter a language name [%s]: " "${TS_LANG_NAME_GUESS}"
+  printf "Please enter a language name [%s]: " "${atsp_lang_guess}"
 
   read -r guess
 
-  guess=${guess:-"${TS_LANG_NAME_GUESS}"}
+  guess=${guess:-"${atsp_lang_guess}"}
 
   # XXX: improve consistency check -- c identifier chars and - are ok?
   scan=$(echo "${guess}" | sed 's/[^_a-zA-Z0-9-]//')

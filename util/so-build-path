@@ -5,6 +5,6 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 ########################################################################
 
-SO_NAME=$("${THIS_SCRIPT_DIR}"/so-name)
+so_name=$("${THIS_SCRIPT_DIR}"/so-name)
 
-echo "$1/${SO_NAME}"
+echo "$1/${so_name}"

@@ -15,9 +15,9 @@ cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
-SO_NAME=$("${ATSP_UTIL}"/so-name)
+so_name=$("${ATSP_UTIL}"/so-name)
 
-if [ -f "${BUILD_DIR_PATH}/${SO_NAME}" ]; then
+if [ -f "${BUILD_DIR_PATH}/${so_name}" ]; then
   printf "Found shared object, installing.\n"
 else
   printf "Failed to find shared object...exiting\n"
@@ -28,9 +28,9 @@ mkdir -p "${SO_INSTALL_DIR}"
 
 printf "* Copying shared object into place\n"
 
-cp "${BUILD_DIR_PATH}/${SO_NAME}" "${SO_INSTALL_DIR}"
+cp "${BUILD_DIR_PATH}/${so_name}" "${SO_INSTALL_DIR}"
 
-printf "  * so name: %s\n" "${SO_NAME}"
+printf "  * so name: %s\n" "${so_name}"
 printf "  *  source: %s\n" "${BUILD_DIR_PATH}/"
 printf "  *    dest: %s\n" "${SO_INSTALL_DIR}/"
 

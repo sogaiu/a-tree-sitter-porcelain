@@ -56,7 +56,7 @@ cd tree-sitter-<lang-name>
 git clone https://github.com/sogaiu/a-tree-sitter-porcelain .atsp
 
 # ensure .astp/conf has a line in it like: ATSP_LANG=<lang-name>
-$EDITOR .atsp/conf
+$VISUAL .atsp/conf
 
 # need this to put `atsp` command on PATH
 export PATH=$(pwd)/.atsp/bin:$PATH

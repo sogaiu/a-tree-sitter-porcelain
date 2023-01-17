@@ -16,9 +16,9 @@ if [ $# -eq 0 ]; then
   printf "Cleaning wasm file\n"
 fi
 
-PARSER_WASM=$("${ATSP_UTIL}"/wasm-name)
+parser_wasm=$("${ATSP_UTIL}"/wasm-name)
 
-rm -f "${PARSER_WASM}"
+rm -f "${parser_wasm}"
 
 cd "${cur_dir}" || exit 1
 

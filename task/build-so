@@ -24,7 +24,7 @@ fi
 
 mkdir -p "${BUILD_DIR_PATH}"
 
-SO_NAME=$("${ATSP_UTIL}"/so-name)
+so_name=$("${ATSP_UTIL}"/so-name)
 
 # XXX: not relying on the tree-sitter cli for building seems more
 #      flexible.
@@ -52,14 +52,14 @@ fi
 printf "* Linking\n"
 if [ -f src/scanner.cc ]; then
   c++ -fPIC -shared "${BUILD_DIR_PATH}"/*.o \
-      -o "${BUILD_DIR_PATH}/${SO_NAME}"
+      -o "${BUILD_DIR_PATH}/${so_name}"
 else
   cc -fPIC -shared "${BUILD_DIR_PATH}"/*.o \
-      -o "${BUILD_DIR_PATH}/${SO_NAME}"
+      -o "${BUILD_DIR_PATH}/${so_name}"
 fi
 
 printf "* Result is at:\n"
-printf "    %s\n" "${BUILD_DIR_PATH}/${SO_NAME}"
+printf "    %s\n" "${BUILD_DIR_PATH}/${so_name}"
 
 cd "${cur_dir}" || exit 1
 

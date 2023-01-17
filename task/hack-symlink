@@ -72,13 +72,13 @@ if [ "" = "${ATSP_LANG}" ]; then
   exit 1
 fi
 
-LINK_NAME=tree-sitter-${ATSP_LANG}
+link_name=tree-sitter-${ATSP_LANG}
 
 # XXX: was used for the dump script
-#HACK_LINK=$(ls -d "${LINK_NAME}" 2> /dev/null || printf "None")
-#HACK_LINK_DEREF=$(readlink "${LINK_NAME}" 2> /dev/null || printf "None")
+#hack_link=$(ls -d "${link_name}" 2> /dev/null || printf "None")
+#hack_link_deref=$(readlink "${link_name}" 2> /dev/null || printf "None")
 
-if [ ! -e "${LINK_NAME}" ]; then
+if [ ! -e "${link_name}" ]; then
   printf "Work-around symlink not found so creating it.\n"
 else
   printf "Found work-around symlink, exiting.\n"
@@ -86,17 +86,17 @@ else
   exit 0
 fi
 
-SYS_TYPE=$("${ATSP_UTIL}"/sys-type)
+sys_type=$("${ATSP_UTIL}"/sys-type)
 
 printf "* Invoking ln\n"
 
 # for msys2 / mingw64, need env var MSYS to be set to winsymlinks:nativestrict
 # from some version of windows 10 and beyond(?), setting up developer mode
 # allows use of symlinks
-if [ "${SYS_TYPE}" = "MINGW64" ]; then
-  MSYS=winsymlinks:nativestrict ln -sf . "${LINK_NAME}"
+if [ "${sys_type}" = "MINGW64" ]; then
+  MSYS=winsymlinks:nativestrict ln -sf . "${link_name}"
 else
-  ln -sf . "${LINK_NAME}"
+  ln -sf . "${link_name}"
 fi
 
 printf "* To get limiting to work fully, see footnote in a comment of:\n"
