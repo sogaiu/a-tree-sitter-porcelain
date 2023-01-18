@@ -70,16 +70,15 @@ atsp list
 
 ## What's In Here
 
-* `bin` - contains wrapper script `atsp` which invokes `make`
+* `bin` - contains wrapper program `atsp` for convenient task execution
 * `conf` - contains settings specific to the grammar repository
 * `task` - task scripts
-* `util` - directory of utility scripts used by task scripts and `Makefile`
-* `Makefile` - Makefile that invokes task scripts
+* `util` - directory of utility scripts used by task scripts
 * `README.md` - this README file
 
 ### `bin`
 
-Add this directory your PATH to make the wrapper script `atsp`
+Add this directory to your PATH to make the wrapper script `atsp`
 conveniently available for use.
 
 ### `conf`
@@ -105,22 +104,13 @@ course of working with a grammar repository such as:
 * Cleaning up files and directories
 * Starting the web playground
 
-The scripts can be executed on their own but they are also used as
-recipes for targets of the `Makefile`.
+The scripts can be executed on their own but they can also be used as
+subcommands from the `atsp` wrapper program.
 
 ### `util`
 
 The `util` directory contains some scripts that allow reuse of
-functionality invoked from the `Makefile` as well as from the task
-scripts.  The hope here was to reduce duplication.
-
-### `Makefile`
-
-Makes certain task scripts available for execution via targets.
-
-_N.B._ It assumes `make` is invoked from the root of the grammar
-repository (usually by the wrapper script).  Execution from
-elsewhere may not yield proper behavior.
+functionality.  The hope here was to reduce duplication.
 
 ## Linting Shell Scripts
 

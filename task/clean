@@ -15,7 +15,7 @@ cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
-deprintf "Cleaning various files.\n"
+deprintf "Working on cleaning various files.\n"
 
 deprintf "\n"
 

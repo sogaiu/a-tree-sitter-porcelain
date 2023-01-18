@@ -3,10 +3,15 @@
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "${THIS_SCRIPT}")
 
+ATSP_ROOT=$(realpath "${THIS_SCRIPT_DIR}/..")
+
+ATSP_TASK="${ATSP_ROOT}"/task
+
 ########################################################################
 
-MAKEFILE=$(realpath "${THIS_SCRIPT_DIR}"/../Makefile)
+task_script_path="$1"
+task_script_name="$(basename "${task_script_path}")"
 
-if [ -f "${MAKEFILE}" ]; then
-   make -f "${MAKEFILE}" "$@"
-fi
+shift
+
+"${ATSP_TASK}/${task_script_name}" "$@"
