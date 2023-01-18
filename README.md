@@ -73,7 +73,6 @@ check              Perform diagnostics and report
 clean              Clean all built artifacts
 corpus-test        Run tree-sitter corpus tests
 create-ts-config   Create tree-sitter config.json if needed
-dump               Dump internal information
 dump-languages     Run tree-sitter dump-languages subcommand
 gen-src            Generate grammar source under src
 hack-symlink       Make symlink to limit tree-sitter scanning

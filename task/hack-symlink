@@ -86,9 +86,9 @@ link_name=tree-sitter-"$ATSP_LANG"
 deprintf "* Checking if symbolic link exists already: %s\n" "$link_name"
 
 if [ ! -e "$link_name" ]; then
-  deprintf "* Didn't find it.\n"
+  deprintf "* Didn't find.\n"
 else
-  eprintf "* Found it, creation unnecessary...exiting.\n"
+  eprintf "* Found, creation not needed...exiting.\n"
   deprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
   exit 1
 fi

@@ -30,13 +30,13 @@ do_dep=${ATSP_FORCE:-0}
 if [ 1 -eq "$do_dep" ]; then
   deprintf "* Unconditionally executing %s.\n" "$dep_script"
 else
-  deprintf "* Looking for parser source at:\n"
+  deprintf "* Looking for parser source:\n"
   deprintf "    %s\n" "src/parser.c"
 
   if [ -f src/parser.c ]; then
-    deprintf "* Found it.\n"
+    deprintf "* Found.\n"
   else
-    deprintf "* Failed to find it.\n"
+    deprintf "* Failed to find.\n"
     do_dep=1
   fi
 fi

@@ -23,9 +23,9 @@ cd "$PARSER_PROJ_DIR" || exit 1
 deprintf "* Looking for grammar.js.\n"
 
 if [ -f grammar.js ]; then
-  deprintf "* Found it.\n"
+  deprintf "* Found.\n"
 else
-  eprintf "* Failed to find it.\n"
+  eprintf "* Failed to find.\n"
   eprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
   exit 1
 fi

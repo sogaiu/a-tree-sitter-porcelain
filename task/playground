@@ -50,13 +50,13 @@ parser_wasm_path=$PARSER_PROJ_DIR/$parser_wasm
 if [ 1 -eq "$do_dep" ]; then
   deprintf "* Unconditionally executing %s.\n" "$dep_script"
 else
-  deprintf "* Expecting parser wasm at:\n"
+  deprintf "* Looking for parser wasm:\n"
   deprintf "    %s\n" "$parser_wasm_path"
 
   if [ -f "$parser_wasm_path" ]; then
-    deprintf "* Found it.\n"
+    deprintf "* Found.\n"
   else
-    deprintf "* Failed to find it.\n"
+    deprintf "* Failed to find.\n"
     do_dep=1
   fi
 fi

@@ -20,13 +20,13 @@ cd "$PARSER_PROJ_DIR" || exit 1
 
 ########################################################################
 
-deprintf "* Looking for shared object at:\n"
+deprintf "* Looking for shared object:\n"
 deprintf "    %s\n" "$INSTALLED_SO_PATH"
 
 if [ -f "$INSTALLED_SO_PATH" ]; then
-  deprintf "* Found it\n"
+  deprintf "* Found.\n"
 else
-  eprintf "* Didn't find shared object to uninstall\n"
+  eprintf "* Didn't find shared object to uninstall.\n"
   deprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
   exit 1
 fi

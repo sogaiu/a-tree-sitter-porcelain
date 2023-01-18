@@ -51,15 +51,33 @@ if [ 1 -eq "$do_dep" ]; then
   deprintf "* Unconditionally executing %s.\n" "$dep_script"
 else
   # XXX: this might not be enough -- see above note about preconditions
-  deprintf "* Looking for parser source at:\n"
-  deprintf "    %s\n" "src/parser.c"
+  deprintf "* Looking for parser source:\n"
+  deprintf "    %s\n" "src/parser.c, src/grammar.json"
 
-  if [ -f src/parser.c ]; then
-    deprintf "* Found it.\n"
+  if [ -f src/parser.c ] && [ -f src/grammar.json ]; then
+    deprintf "* Found.\n"
   else
-    deprintf "* Failed to it.\n"
+    deprintf "* Failed to find.\n"
     do_dep=1
   fi
+
+  # XXX: strictly speaking want to compare mtimes between:
+  #
+  #      * parser.c and shared object
+  #      * grammar.json and shared object
+  #      * scanner.(c|cc) and shared object
+  #
+  #      some issues:
+  #
+  #      * (non-portable?) ways of determining mtime via shell script unknown
+  #        * date
+  #        * find
+  #        * ls
+  #        * stat
+  #      * which shared object should be compared (installed / built)?
+  #      * as TREE_SITTER_LIBDIR is not used by any released
+  #        tree-sitter, can it be relied on to determine
+  #        location of installed shared library?
 fi
 
 # executing dependency script if necessary

@@ -37,9 +37,9 @@ else
   deprintf "    %s\n" "$so_path"
     
   if [ -f "$so_path" ]; then
-    deprintf "* Found it.\n"
+    deprintf "* Found.\n"
   else
-    deprintf "* Failed to find it.\n"
+    deprintf "* Failed to find.\n"
     do_dep=1
   fi
 fi
