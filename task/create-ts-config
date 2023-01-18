@@ -13,12 +13,16 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 cur_dir=$(pwd)
 
+deprintf "Working on creating tree-sitter config file.\n"
+
 cd "${PARSER_PROJ_DIR}" || exit 1
+
+deprintf "\n"
 
 config_json="${TREE_SITTER_DIR}"/config.json
 
 if [ ! -e "${config_json}" ]; then
-  printf "Creating config.json under:\n  %s\n" "${TREE_SITTER_DIR}/"
+  deprintf "* Creating config.json under:\n    %s\n" "${TREE_SITTER_DIR}/"
 
   mkdir -p "${TREE_SITTER_DIR}"
 
@@ -79,10 +83,13 @@ if [ ! -e "${config_json}" ]; then
 }
 EOF
 else
-  printf "The file config.json already exists under:\n  %s\n" \
-         "${TREE_SITTER_DIR}/"
+  eprintf "The file config.json already exists under:\n  %s\n" \
+          "${TREE_SITTER_DIR}/"
+  exit 1
 fi
+
+deprintf "\n"
 
 cd "${cur_dir}" || exit 1
 
-printf "Done\n"
+deprintf "Done\n"

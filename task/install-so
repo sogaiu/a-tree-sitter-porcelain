@@ -5,6 +5,7 @@ THIS_SCRIPT_DESC="Install grammar's shared object"
 
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
 
 # shellcheck source=.common
 . "${THIS_SCRIPT_DIR}/.common"
@@ -13,27 +14,43 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 cur_dir=$(pwd)
 
+deprintf "Working on installing shared object.\n"
+
 cd "${PARSER_PROJ_DIR}" || exit 1
 
-so_name=$("${ATSP_UTIL}"/so-name)
+deprintf "\n"
 
-if [ -f "${BUILD_DIR_PATH}/${so_name}" ]; then
-  printf "Found shared object, installing.\n"
+so_name=$("${ATSP_UTIL}"/so-name)
+so_path=${BUILD_DIR_PATH}/${so_name}
+
+if [ -f "${so_path}" ]; then
+  deprintf "* Found shared object: %s\n" "${so_path}"
 else
-  printf "Failed to find shared object...exiting\n"
-  exit 1;
+  deprintf "* Failed to find shared object...attempting to build.\n"
+
+  "${THIS_SCRIPT_DIR}"/build-so
+  result=$?
+
+  if [ 0 -eq "${result}" ]; then
+    deprintf "* Continuing with %s.\n" "${THIS_SCRIPT_NAME}"
+  else
+    eprintf "* Aborting installing of shared object.\n"
+    exit 1
+  fi
 fi
 
 mkdir -p "${SO_INSTALL_DIR}"
 
-printf "* Copying shared object into place\n"
+deprintf "* Copying shared object into place\n"
 
-cp "${BUILD_DIR_PATH}/${so_name}" "${SO_INSTALL_DIR}"
+cp "$so_path" "${SO_INSTALL_DIR}"
 
-printf "  * so name: %s\n" "${so_name}"
-printf "  *  source: %s\n" "${BUILD_DIR_PATH}/"
-printf "  *    dest: %s\n" "${SO_INSTALL_DIR}/"
+deprintf "  * so name: %s\n" "${so_name}"
+deprintf "  *  source: %s\n" "${BUILD_DIR_PATH}/"
+deprintf "  *    dest: %s\n" "${SO_INSTALL_DIR}/"
+
+deprintf "\n"
 
 cd "${cur_dir}" || exit 1
 
-printf "Done\n"
+deprintf "Done\n"

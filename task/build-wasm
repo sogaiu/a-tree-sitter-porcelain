@@ -15,11 +15,22 @@ cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
+deprintf "Working on building parser .wasm.\n"
+
 if [ -f src/parser.c ]; then
-  printf "Found src/parser.c, building parser wasm.\n"
+  deprintf "* Found src/parser.c.\n"
 else
-  printf "Failed to find src/parser.c...exiting\n"
-  exit 1;
+  deprintf "* Failed to find src/parser.c...attempting to generate.\n"
+
+  "${THIS_SCRIPT_DIR}"/gen-src
+  result=$?
+
+  if [ 0 -eq "${result}" ]; then
+    deprintf "* Continuing with building parser .wasm.\n"
+  else
+    eprintf "* Aborting building of parser .wasm.\n"
+    exit 1
+  fi
 fi
 
 # XXX: the following may be brittle as it depends on emscripten
@@ -60,25 +71,25 @@ fi
 emsdk=${ATSP_EMSDK:-"$("${ATSP_UTIL}"/atsp-emsdk)"}
 
 if [ "" = "${emsdk}" ]; then
- printf "* Did not find an appropriate value for emsdk directory\n"
+ eprintf "* Did not find an appropriate value for emsdk directory\n"
  exit 1
 fi
 
 if [ ! -d "${emsdk}" ]; then
- printf "* emsdk value not a directory: %s\n" "${emsdk}"
+ eprintf "* emsdk value not a directory: %s\n" "${emsdk}"
  exit 1
 fi
 
 emsdk=$(realpath "${emsdk}")
 
-printf "* emsdk: %s\n" "${emsdk}"
+deprintf "* emsdk: %s\n" "${emsdk}"
 
 # some consistency checking
 #
 # XXX: this should work as long as emsdk_env.* keeps setting the
 #      EMSDK_NODE env var?
 if [ ! -d "${emsdk}/node" ]; then
-  printf "* emsdk directory doesn't look right: %s\n" "${emsdk}"
+  eprintf "* emsdk directory doesn't look right: %s\n" "${emsdk}"
   exit 1
 fi
 
@@ -97,7 +108,7 @@ export EMSDK="${emsdk}"
 export EMSDK_NODE="${emsdk_node}"
 export PATH="${emsdk}:${emscripten}:${node_bin_dir_path}:${PATH}"
 
-printf "* Invoking tree-sitter build-wasm subcommand\n"
+deprintf "* Invoking tree-sitter build-wasm subcommand\n"
 
 # XXX: possibly need to make TREE_SITTER_DIR / TREE_SITTER_LIBDIR
 #      available via export?  don't think so as those are only
@@ -107,4 +118,4 @@ ${ATSP_TS_PATH} build-wasm
 
 cd "${cur_dir}" || exit 1
 
-printf "Done\n"
+deprintf "Done\n"

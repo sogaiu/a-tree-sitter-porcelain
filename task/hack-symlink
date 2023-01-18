@@ -13,7 +13,11 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 cur_dir=$(pwd)
 
+deprintf "Working on setting up hack symlink.\n"
+
 cd "${PARSER_PROJ_DIR}" || exit 1
+
+deprintf "\n"
 
 # XXX: various tree-sitter subcommands can lead to scanning of
 #      directories looking for grammar directories that can have their
@@ -68,7 +72,7 @@ cd "${PARSER_PROJ_DIR}" || exit 1
 #      the goal is to have one and have it be the current one.
 
 if [ "" = "${ATSP_LANG}" ]; then
-  printf "Expected ATSP_LANG to be set but did not, exiting.\n"
+  eprintf "* Expected ATSP_LANG to be set but did not, exiting.\n"
   exit 1
 fi
 
@@ -78,17 +82,18 @@ link_name=tree-sitter-${ATSP_LANG}
 #hack_link=$(ls -d "${link_name}" 2> /dev/null || printf "None")
 #hack_link_deref=$(readlink "${link_name}" 2> /dev/null || printf "None")
 
+deprintf "* Looking for link named: %s\n" "${link_name}"
+
 if [ ! -e "${link_name}" ]; then
-  printf "Work-around symlink not found so creating it.\n"
+  deprintf "* Symlink not found so creating it.\n"
 else
-  printf "Found work-around symlink, exiting.\n"
-  printf "Done\n"
-  exit 0
+  eprintf "* Found work-around symlink, exiting.\n"
+  exit 1
 fi
 
 sys_type=$("${ATSP_UTIL}"/sys-type)
 
-printf "* Invoking ln\n"
+deprintf "* Invoking ln\n"
 
 # for msys2 / mingw64, need env var MSYS to be set to winsymlinks:nativestrict
 # from some version of windows 10 and beyond(?), setting up developer mode
@@ -99,10 +104,12 @@ else
   ln -sf . "${link_name}"
 fi
 
-printf "* To get limiting to work fully, see footnote in a comment of:\n"
+deprintf "* To get limiting to work fully, see footnote in a comment of:\n"
 
-printf "    tree-sitter/tree-sitter#2017\n"
+deprintf "    tree-sitter/tree-sitter#2017\n"
+
+deprintf "\n"
 
 cd "${cur_dir}" || exit 1
 
-printf "Done\n"
+deprintf "Done\n"

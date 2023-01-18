@@ -15,21 +15,25 @@ cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
-printf "Looking for shared object at:\n"
-printf "  %s\n" "${INSTALLED_SO_PATH}"
+deprintf "Working on uninstalling shared object.\n"
+
+deprintf "\n"
+
+deprintf "* Expecting shared object at:\n"
+deprintf "    %s\n" "${INSTALLED_SO_PATH}"
 
 if [ -f "${INSTALLED_SO_PATH}" ]; then
-  printf "* Found it\n"
+  deprintf "* Found it\n"
 else
-  printf "* Didn't find it\n"
+  eprintf "* Didn't find shared object to uninstall\n"
   # XXX
   exit 1;
 fi
 
-printf "* Removing installed shared object\n"
+deprintf "* Removing installed shared object\n"
 
 rm -rf "${INSTALLED_SO_PATH}"
 
 cd "${cur_dir}" || exit 1
 
-printf "Done\n"
+deprintf "Done\n"

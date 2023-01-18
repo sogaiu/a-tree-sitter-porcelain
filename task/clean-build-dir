@@ -13,7 +13,7 @@ cur_dir=$(pwd)
 cd "${PARSER_PROJ_DIR}" || exit 1
 
 if [ $# -eq 0 ]; then
-  printf "Cleaning build directory\n"
+  deprintf "Cleaning build directory\n"
 fi
 
 rm -rf "${BUILD_DIR_PATH}"
@@ -21,6 +21,6 @@ rm -rf "${BUILD_DIR_PATH}"
 cd "${cur_dir}" || exit 1
 
 if [ $# -eq 0 ]; then
-  printf "Done\n"
+  deprintf "Done\n"
 fi
 

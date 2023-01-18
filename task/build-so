@@ -5,6 +5,7 @@ THIS_SCRIPT_DESC="Build a shared object for a grammar"
 
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
 
 # shellcheck source=.common
 . "${THIS_SCRIPT_DIR}/.common"
@@ -15,11 +16,23 @@ cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
+deprintf "Working on building shared object.\n";
+
 if [ -f src/parser.c ]; then
-  printf "Found src/parser.c, building shared object.\n"
+  # found src/parser.c
+  deprintf "* Found src/parser.c.\n"
 else
-  printf "Failed to find src/parser.c...exiting\n"
-  exit 1;
+  deprintf "* Failed to find src/parser.c...attempting to generate.\n"
+
+  "${THIS_SCRIPT_DIR}"/gen-src
+  result=$?
+
+  if [ 0 -eq "${result}" ]; then
+    deprintf "* Continuing with %s.\n" "${THIS_SCRIPT_NAME}"
+  else
+    eprintf "* Aborting building of shared object.\n"
+    exit 1
+  fi
 fi
 
 mkdir -p "${BUILD_DIR_PATH}"
@@ -36,20 +49,20 @@ so_name=$("${ATSP_UTIL}"/so-name)
 #      writing some rust, recomplining the tree-sitter cli, and
 #      running the invocation again.  that kind of thing seems like it
 #      could be avoided by externalization as is dones below.
-printf "* Compiling parser\n"
+deprintf "* Compiling parser\n"
 cc -fPIC -c -Isrc src/parser.c -o "${BUILD_DIR_PATH}/parser.o"
 
 if [ -f src/scanner.c ]; then
-  printf "* Compiling scanner\n"
+  deprintf "* Compiling scanner\n"
   cc -fPIC -c -Isrc src/scanner.c -o "${BUILD_DIR_PATH}/scanner.o"
 fi
 
 if [ -f src/scanner.cc ]; then
-  printf "* Compiling scanner\n"
+  deprintf "* Compiling scanner\n"
   c++ -fPIC -Isrc -c src/scanner.cc -o "${BUILD_DIR_PATH}/scanner.o"
 fi
 
-printf "* Linking\n"
+deprintf "* Linking\n"
 if [ -f src/scanner.cc ]; then
   c++ -fPIC -shared "${BUILD_DIR_PATH}"/*.o \
       -o "${BUILD_DIR_PATH}/${so_name}"
@@ -58,9 +71,9 @@ else
       -o "${BUILD_DIR_PATH}/${so_name}"
 fi
 
-printf "* Result is at:\n"
-printf "    %s\n" "${BUILD_DIR_PATH}/${so_name}"
+deprintf "* Result is at:\n"
+deprintf "    %s\n" "${BUILD_DIR_PATH}/${so_name}"
 
 cd "${cur_dir}" || exit 1
 
-printf "Done\n"
+deprintf "Done\n"

@@ -13,16 +13,20 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 cur_dir=$(pwd)
 
+deprintf "Working on generating parser source.\n"
+
 cd "${PARSER_PROJ_DIR}" || exit 1
 
+deprintf "\n"
+
 if [ -f grammar.js ]; then
-  printf "Found grammar.js, generating src/parser.c and friends.\n"
+  deprintf "* Found grammar.js, generating src/parser.c and friends.\n"
 else
-  printf "Failed to find grammar.js...exiting\n"
+  eprintf "* Failed to find grammar.js...exiting\n"
   exit 1;
 fi
 
-printf "* Invoking tree-sitter generate subcommand\n"
+deprintf "* Invoking tree-sitter generate subcommand\n"
 
 abi=${ATSP_ABI:-$("${ATSP_UTIL}"/atsp-abi)}
 
@@ -31,6 +35,8 @@ abi=${ATSP_ABI:-$("${ATSP_UTIL}"/atsp-abi)}
 
 ${ATSP_TS_PATH} generate --abi "${abi}" --no-bindings
 
+deprintf "\n"
+
 cd "${cur_dir}" || exit 1
 
-printf "Done\n"
+deprintf "Done\n"

@@ -15,17 +15,21 @@ cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
-printf "Cleaning\n"
+deprintf "Cleaning various files.\n"
 
-printf "* Generated source\n"
+deprintf "\n"
+
+deprintf "* Generated source\n"
 "${THIS_SCRIPT_DIR}"/clean-gen-src 1
 
-printf "* Build directory\n"
+deprintf "* Build directory\n"
 "${THIS_SCRIPT_DIR}"/clean-build-dir 1
 
-printf "* Wasm file\n"
+deprintf "* Wasm file\n"
 "${THIS_SCRIPT_DIR}"/clean-wasm-file 1
 
 cd "${cur_dir}" || exit 1
 
-printf "Done\n"
+deprintf "\n"
+
+deprintf "Done\n"

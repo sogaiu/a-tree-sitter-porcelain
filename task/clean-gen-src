@@ -13,7 +13,7 @@ cur_dir=$(pwd)
 cd "${PARSER_PROJ_DIR}" || exit 1
 
 if [ $# -eq 0 ]; then
-  printf "Cleaning generated source\n"
+  deprintf "Cleaning generated source\n"
 fi
 
 rm -rf src/parser.c
@@ -23,7 +23,7 @@ rm -rf src/tree_sitter
 cd "${cur_dir}" || exit 1
 
 if [ $# -eq 0 ]; then
-  printf "Done\n"
+  deprintf "Done\n"
 fi
 
 

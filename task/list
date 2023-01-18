@@ -15,7 +15,9 @@ cur_dir=$(pwd)
 
 cd "${PARSER_PROJ_DIR}" || exit 1
 
-printf "\n"
+deprintf "Listing atsp tasks.\n"
+
+deprintf "\n"
 
 # n.b. this is literal, not globbed
 tasks="${THIS_SCRIPT_DIR}/*"
@@ -52,8 +54,8 @@ do
   fi
 done
 
-printf "\n"
+deprintf "\n"
 
 cd "${cur_dir}" || exit 1
 
-printf "Done\n"
+deprintf "Done\n"

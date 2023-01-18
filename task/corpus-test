@@ -13,17 +13,21 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 cur_dir=$(pwd)
 
+deprintf "Working on running tree-sitter corpus tests.\n"
+
 cd "${PARSER_PROJ_DIR}" || exit 1
+
+deprintf "\n"
 
 # XXX: is this really what should be checked for?
 if [ -f src/parser.c ]; then
-  printf "Found src/parser.c, running corpus tests.\n"
+  deprintf "* Found src/parser.c, running corpus tests.\n"
 else
-  printf "Failed to find grammar.js...exiting\n"
+  eprintf "* Failed to find src/parser.c...exiting\n"
   exit 1;
 fi
 
-printf "* Invoking tree-sitter test subcommand\n"
+deprintf "* Invoking tree-sitter test subcommand\n"
 
 # XXX: is this a broken way to do things?
 if [ "" != "${TREE_SITTER_DIR}" ]; then
@@ -37,6 +41,8 @@ fi
 
 ${ATSP_TS_PATH} test
 
+deprintf "\n"
+
 cd "${cur_dir}" || exit 1
 
-printf "Done\n"
+deprintf "Done\n"
