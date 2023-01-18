@@ -94,6 +94,7 @@ Other values that can be configured include:
 
 * `ATSP_EMSDK` - path to emsdk
 * `ATSP_ABI` - ABI version for `tree-sitter generate` to use (13 is good now)
+* `ATSP_VERBOSE` - task script verbosity (1 for verbose)
 
 ### `task`
 

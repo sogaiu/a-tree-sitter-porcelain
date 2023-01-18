@@ -5,6 +5,7 @@ THIS_SCRIPT_DESC="Start tree-sitter playground"
 
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
 
 # shellcheck source=.common
 . "${THIS_SCRIPT_DIR}/.common"
@@ -35,13 +36,24 @@ deprintf "\n"
 parser_wasm=$("${ATSP_UTIL}"/wasm-name)
 parser_wasm_path=${PARSER_PROJ_DIR}/${parser_wasm}
 
-deprintf "* Expecting parser wasm at:\n    %s\n" "${parser_wasm_path}"
+deprintf "* Expecting parser wasm at:\n"
+
+deprintf "    %s\n" "${parser_wasm_path}"
 
 if [ -f "${parser_wasm_path}" ]; then
   deprintf "* Found it.\n"
 else
-  eprintf "* Failed to find parser wasm.\n"
-  exit 1
+    deprintf "* Failed to find parser wasm...attempting to build.\n"
+
+  "${THIS_SCRIPT_DIR}"/build-wasm
+  result=$?
+
+  if [ 0 -eq "${result}" ]; then
+    deprintf "* Continuing with %s.\n" "${THIS_SCRIPT_NAME}"
+  else
+    eprintf "* Aborting %s\n" "${THIS_SCRIPT_NAME}"
+    exit 1
+  fi
 fi
 
 deprintf "* Invoking tree-sitter playground subcommand\n"

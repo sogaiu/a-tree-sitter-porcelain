@@ -5,6 +5,7 @@ THIS_SCRIPT_DESC="Build a .wasm file for a grammar"
 
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
 
 # shellcheck source=.common
 . "${THIS_SCRIPT_DIR}/.common"
@@ -13,9 +14,11 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 cur_dir=$(pwd)
 
+deprintf "Working on building parser .wasm.\n"
+
 cd "${PARSER_PROJ_DIR}" || exit 1
 
-deprintf "Working on building parser .wasm.\n"
+deprintf "\n"
 
 if [ -f src/parser.c ]; then
   deprintf "* Found src/parser.c.\n"
@@ -26,9 +29,9 @@ else
   result=$?
 
   if [ 0 -eq "${result}" ]; then
-    deprintf "* Continuing with building parser .wasm.\n"
+    deprintf "* Continuing with %s.\n" "${THIS_SCRIPT_NAME}"
   else
-    eprintf "* Aborting building of parser .wasm.\n"
+    eprintf "* Aborting %s\n" "${THIS_SCRIPT_NAME}"
     exit 1
   fi
 fi
@@ -115,6 +118,8 @@ deprintf "* Invoking tree-sitter build-wasm subcommand\n"
 #      necessary for parsing-like activities?
 
 ${ATSP_TS_PATH} build-wasm
+
+deprintf "\n"
 
 cd "${cur_dir}" || exit 1
 

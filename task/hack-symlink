@@ -82,18 +82,18 @@ link_name=tree-sitter-${ATSP_LANG}
 #hack_link=$(ls -d "${link_name}" 2> /dev/null || printf "None")
 #hack_link_deref=$(readlink "${link_name}" 2> /dev/null || printf "None")
 
-deprintf "* Looking for link named: %s\n" "${link_name}"
+deprintf "* Checking if symbolic link exists already: %s\n" "${link_name}"
 
 if [ ! -e "${link_name}" ]; then
-  deprintf "* Symlink not found so creating it.\n"
+  deprintf "* Didn't find it.\n"
 else
-  eprintf "* Found work-around symlink, exiting.\n"
+  eprintf "* Found it, creation unnecessary...exiting.\n"
   exit 1
 fi
 
 sys_type=$("${ATSP_UTIL}"/sys-type)
 
-deprintf "* Invoking ln\n"
+deprintf "* Invoking ln -sf\n"
 
 # for msys2 / mingw64, need env var MSYS to be set to winsymlinks:nativestrict
 # from some version of windows 10 and beyond(?), setting up developer mode

@@ -23,8 +23,12 @@ deprintf "\n"
 so_name=$("${ATSP_UTIL}"/so-name)
 so_path=${BUILD_DIR_PATH}/${so_name}
 
+deprintf "* Looking for built shared object at:\n"
+
+deprintf "    %s\n" "${so_path}"
+
 if [ -f "${so_path}" ]; then
-  deprintf "* Found shared object: %s\n" "${so_path}"
+  deprintf "* Found it.\n"
 else
   deprintf "* Failed to find shared object...attempting to build.\n"
 
@@ -34,10 +38,14 @@ else
   if [ 0 -eq "${result}" ]; then
     deprintf "* Continuing with %s.\n" "${THIS_SCRIPT_NAME}"
   else
-    eprintf "* Aborting installing of shared object.\n"
+    eprintf "* Aborting %s\n" "${THIS_SCRIPT_NAME}"
     exit 1
   fi
 fi
+
+deprintf "* Ensuring shared object install directory exists at:\n"
+
+deprintf "    %s\n" "${SO_INSTALL_DIR}"
 
 mkdir -p "${SO_INSTALL_DIR}"
 
