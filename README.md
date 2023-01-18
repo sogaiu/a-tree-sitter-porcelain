@@ -66,6 +66,21 @@ source .atsp/completion
 
 # see a list of subcommands
 atsp list
+
+build-so           Build a shared object for a grammar
+build-wasm         Build a .wasm file for a grammar
+check              Perform diagnostics and report
+clean              Clean all built artifacts
+corpus-test        Run tree-sitter corpus tests
+create-ts-config   Create tree-sitter config.json if needed
+dump               Dump internal information
+dump-languages     Run tree-sitter dump-languages subcommand
+gen-src            Generate grammar source under src
+hack-symlink       Make symlink to limit tree-sitter scanning
+install-so         Install grammar's shared object
+list               List tasks
+playground         Start tree-sitter playground
+uninstall-so       Uninstall grammar's shared object
 ```
 
 ## What's In Here
