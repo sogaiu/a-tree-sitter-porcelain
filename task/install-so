@@ -8,57 +8,89 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
 
 # shellcheck source=.common
-. "${THIS_SCRIPT_DIR}/.common"
+. "$THIS_SCRIPT_DIR/.common"
+
+dep_script="build-so"
 
 ########################################################################
 
 cur_dir=$(pwd)
 
-deprintf "Working on installing shared object.\n"
+deprintf "%s: start\n" "$THIS_SCRIPT_NAME"
 
-cd "${PARSER_PROJ_DIR}" || exit 1
+cd "$PARSER_PROJ_DIR" || exit 1
 
-deprintf "\n"
+########################################################################
 
-so_name=$("${ATSP_UTIL}"/so-name)
-so_path=${BUILD_DIR_PATH}/${so_name}
+# this section is all about prerequisites
 
-deprintf "* Looking for built shared object at:\n"
+do_dep=${ATSP_FORCE:-0}
 
-deprintf "    %s\n" "${so_path}"
+so_name=$("$ATSP_UTIL"/so-name)
+so_path="$BUILD_DIR_PATH"/"$so_name"
 
-if [ -f "${so_path}" ]; then
-  deprintf "* Found it.\n"
+# decide whether to execute dependency script
+if [ 1 -eq "$do_dep" ]; then
+  deprintf "* Unconditionally executing %s.\n" "$dep_script"
 else
-  deprintf "* Failed to find shared object...attempting to build.\n"
+  deprintf "* Looking for built shared object at:\n"
+  deprintf "    %s\n" "$so_path"
+    
+  if [ -f "$so_path" ]; then
+    deprintf "* Found it.\n"
+  else
+    deprintf "* Failed to find it.\n"
+    do_dep=1
+  fi
+fi
 
-  "${THIS_SCRIPT_DIR}"/build-so
+# executing dependency script if necessary
+if [ 1 -eq "$do_dep" ]; then
+  deprintf "* Calling %s.\n" "$dep_script"
+
+  "$THIS_SCRIPT_DIR"/"$dep_script"
   result=$?
 
-  if [ 0 -eq "${result}" ]; then
-    deprintf "* Continuing with %s.\n" "${THIS_SCRIPT_NAME}"
+  if [ 0 -eq "$result" ]; then
+    deprintf "%s: resume\n" "$THIS_SCRIPT_NAME"
   else
-    eprintf "* Aborting %s\n" "${THIS_SCRIPT_NAME}"
+    eprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
     exit 1
   fi
 fi
 
+########################################################################
+
+# the rest of the file is about actually carrying things out
+
 deprintf "* Ensuring shared object install directory exists at:\n"
 
-deprintf "    %s\n" "${SO_INSTALL_DIR}"
+deprintf "    %s\n" "$SO_INSTALL_DIR"
 
-mkdir -p "${SO_INSTALL_DIR}"
+mkdir -p "$SO_INSTALL_DIR"
 
-deprintf "* Copying shared object into place\n"
+#deprintf "* Copying shared object into place\n"
 
-cp "$so_path" "${SO_INSTALL_DIR}"
+cmd="cp $so_path $SO_INSTALL_DIR"
 
-deprintf "  * so name: %s\n" "${so_name}"
-deprintf "  *  source: %s\n" "${BUILD_DIR_PATH}/"
-deprintf "  *    dest: %s\n" "${SO_INSTALL_DIR}/"
+#deprintf "  * so name: %s\n" "$so_name"
+#deprintf "  *  source: %s\n" "$BUILD_DIR_PATH/"
+#deprintf "  *    dest: %s\n" "$SO_INSTALL_DIR/"
 
-deprintf "\n"
+deprintf "* Invoking:\n"
+deprintf "    %s\n" "$cmd"
 
-cd "${cur_dir}" || exit 1
+eval "$cmd"
+result=$?
 
-deprintf "Done\n"
+if [ 0 -ne "$result" ]; then
+  eprintf "* Copying failed: %s.\n" "$result"
+  deprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
+  exit 1
+fi
+
+########################################################################
+
+cd "$cur_dir" || exit 1
+
+deprintf "%s: end\n" "$THIS_SCRIPT_NAME"

@@ -5,31 +5,34 @@ THIS_SCRIPT_DESC="Clean all built artifacts"
 
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
 
 # shellcheck source=.common
-. "${THIS_SCRIPT_DIR}/.common"
+. "$THIS_SCRIPT_DIR/.common"
 
 ########################################################################
 
 cur_dir=$(pwd)
 
-cd "${PARSER_PROJ_DIR}" || exit 1
+deprintf "%s: start\n" "$THIS_SCRIPT_NAME"
 
-deprintf "Working on cleaning various files.\n"
+cd "$PARSER_PROJ_DIR" || exit 1
 
-deprintf "\n"
+########################################################################
+
+# XXX: not checking return values...
 
 deprintf "* Generated source\n"
-"${THIS_SCRIPT_DIR}"/clean-gen-src 1
+"$THIS_SCRIPT_DIR"/clean-gen-src
 
 deprintf "* Build directory\n"
-"${THIS_SCRIPT_DIR}"/clean-build-dir 1
+"$THIS_SCRIPT_DIR"/clean-build-dir
 
 deprintf "* Wasm file\n"
-"${THIS_SCRIPT_DIR}"/clean-wasm-file 1
+"$THIS_SCRIPT_DIR"/clean-wasm-file
 
-cd "${cur_dir}" || exit 1
+########################################################################
 
-deprintf "\n"
+cd "$cur_dir" || exit 1
 
-deprintf "Done\n"
+deprintf "%s: end\n" "$THIS_SCRIPT_NAME"

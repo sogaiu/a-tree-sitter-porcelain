@@ -5,19 +5,20 @@ THIS_SCRIPT_DESC="Make symlink to limit tree-sitter scanning"
 
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
 
 # shellcheck source=.common
-. "${THIS_SCRIPT_DIR}/.common"
+. "$THIS_SCRIPT_DIR/.common"
 
 ########################################################################
 
 cur_dir=$(pwd)
 
-deprintf "Working on setting up hack symlink.\n"
+deprintf "%s: start\n" "$THIS_SCRIPT_NAME"
 
-cd "${PARSER_PROJ_DIR}" || exit 1
+cd "$PARSER_PROJ_DIR" || exit 1
 
-deprintf "\n"
+########################################################################
 
 # XXX: various tree-sitter subcommands can lead to scanning of
 #      directories looking for grammar directories that can have their
@@ -71,45 +72,46 @@ deprintf "\n"
 #
 #      the goal is to have one and have it be the current one.
 
-if [ "" = "${ATSP_LANG}" ]; then
+if [ "" = "$ATSP_LANG" ]; then
   eprintf "* Expected ATSP_LANG to be set but did not, exiting.\n"
   exit 1
 fi
 
-link_name=tree-sitter-${ATSP_LANG}
+link_name=tree-sitter-"$ATSP_LANG"
 
 # XXX: was used for the dump script
-#hack_link=$(ls -d "${link_name}" 2> /dev/null || printf "None")
-#hack_link_deref=$(readlink "${link_name}" 2> /dev/null || printf "None")
+#hack_link=$(ls -d "$link_name" 2> /dev/null || printf "None")
+#hack_link_deref=$(readlink "$link_name" 2> /dev/null || printf "None")
 
-deprintf "* Checking if symbolic link exists already: %s\n" "${link_name}"
+deprintf "* Checking if symbolic link exists already: %s\n" "$link_name"
 
-if [ ! -e "${link_name}" ]; then
+if [ ! -e "$link_name" ]; then
   deprintf "* Didn't find it.\n"
 else
   eprintf "* Found it, creation unnecessary...exiting.\n"
+  deprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
   exit 1
 fi
 
-sys_type=$("${ATSP_UTIL}"/sys-type)
+sys_type=$("$ATSP_UTIL"/sys-type)
 
 deprintf "* Invoking ln -sf\n"
 
 # for msys2 / mingw64, need env var MSYS to be set to winsymlinks:nativestrict
 # from some version of windows 10 and beyond(?), setting up developer mode
 # allows use of symlinks
-if [ "${sys_type}" = "MINGW64" ]; then
-  MSYS=winsymlinks:nativestrict ln -sf . "${link_name}"
+if [ "$sys_type" = "MINGW64" ]; then
+  MSYS=winsymlinks:nativestrict ln -sf . "$link_name"
 else
-  ln -sf . "${link_name}"
+  ln -sf . "$link_name"
 fi
 
 deprintf "* To get limiting to work fully, see footnote in a comment of:\n"
 
 deprintf "    tree-sitter/tree-sitter#2017\n"
 
-deprintf "\n"
+########################################################################
 
-cd "${cur_dir}" || exit 1
+cd "$cur_dir" || exit 1
 
-deprintf "Done\n"
+deprintf "%s: end\n" "$THIS_SCRIPT_NAME"

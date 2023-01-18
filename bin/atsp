@@ -3,15 +3,22 @@
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "${THIS_SCRIPT}")
 
-ATSP_ROOT=$(realpath "${THIS_SCRIPT_DIR}/..")
+ATSP_ROOT=$(realpath "$THIS_SCRIPT_DIR/..")
 
-ATSP_TASK="${ATSP_ROOT}"/task
+ATSP_TASK="$ATSP_ROOT"/task
 
 ########################################################################
 
 task_script_path="$1"
-task_script_name="$(basename "${task_script_path}")"
+task_script_name="$(basename "$task_script_path")"
+
+task_script_full_path="$ATSP_TASK/$task_script_name"
 
 shift
 
-"${ATSP_TASK}/${task_script_name}" "$@"
+if [ ! -e "$task_script_full_path" ]; then
+  printf "Subcommand not found: %s\n" "$task_script_name" 1>&2
+  exit 1
+fi
+
+"$task_script_full_path" "$@"

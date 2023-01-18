@@ -5,57 +5,68 @@ THIS_SCRIPT_DESC="List tasks"
 
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
 
 # shellcheck source=.common
-. "${THIS_SCRIPT_DIR}/.common"
+. "$THIS_SCRIPT_DIR/.common"
 
 ########################################################################
 
 cur_dir=$(pwd)
 
-cd "${PARSER_PROJ_DIR}" || exit 1
+deprintf "%s: start\n" "$THIS_SCRIPT_NAME"
 
-deprintf "Listing atsp tasks.\n"
+cd "$PARSER_PROJ_DIR" || exit 1
 
-deprintf "\n"
+########################################################################
 
 # n.b. this is literal, not globbed
-tasks="${THIS_SCRIPT_DIR}/*"
+tasks="$THIS_SCRIPT_DIR/*"
 
 # determine max length of script names for readability
 max_len=0
 
-for task in ${tasks}
+
+for task in $tasks
 do
   cur_len=${#task}
 
-  if [ "${cur_len}" -gt "${max_len}" ]; then
-    max_len="${cur_len}"
+  if [ "$cur_len" -gt "$max_len" ]; then
+    max_len="$cur_len"
   fi
 done
 
-# .common is skipped because its name starts with a dot
-for task in ${tasks} # XXX: sad to be looping again...
-do
-  just_name="$(basename "${task}")"
+deprintf "* Longest task name length is: %s\n" "$max_len"
 
-  desc=$(grep -m 1 THIS_SCRIPT_DESC "${task}" | \
+deprintf "* Listing available tasks\n"
+
+cnt=0
+
+# .common is skipped because its name starts with a dot
+for task in $tasks # XXX: sad to be looping again...
+do
+  just_name="$(basename "$task")"
+
+  desc=$(grep -m 1 THIS_SCRIPT_DESC "$task" | \
          sed 's/^THIS_SCRIPT_DESC="\(.*\)"/\1/')
 
   # if a task has a description, list it
-  if [ "" != "${desc}" ]; then
+  if [ "" != "$desc" ]; then
     pad_len=$((max_len - ${#task} + 1))
 
     printf "%s %*s %s\n" \
-           "${just_name}" \
-           "${pad_len}" \
+           "$just_name" \
+           "$pad_len" \
            " " \
-           "${desc}"
+           "$desc"
+    cnt=$((cnt + 1))
   fi
 done
 
-deprintf "\n"
+deprintf "* Number of tasks detected: %s\n" "$cnt"
 
-cd "${cur_dir}" || exit 1
+########################################################################
 
-deprintf "Done\n"
+cd "$cur_dir" || exit 1
+
+deprintf "%s: end\n" "$THIS_SCRIPT_NAME"

@@ -5,28 +5,29 @@ THIS_SCRIPT_DESC="Create tree-sitter config.json if needed"
 
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
 
 # shellcheck source=.common
-. "${THIS_SCRIPT_DIR}/.common"
+. "$THIS_SCRIPT_DIR/.common"
 
 ########################################################################
 
 cur_dir=$(pwd)
 
-deprintf "Working on creating tree-sitter config file.\n"
+deprintf "%s: start\n" "$THIS_SCRIPT_NAME"
 
-cd "${PARSER_PROJ_DIR}" || exit 1
+cd "$PARSER_PROJ_DIR" || exit 1
 
-deprintf "\n"
+########################################################################
 
-config_json="${TREE_SITTER_DIR}"/config.json
+config_json="$TREE_SITTER_DIR"/config.json
 
-if [ ! -e "${config_json}" ]; then
-  deprintf "* Creating config.json under:\n    %s\n" "${TREE_SITTER_DIR}/"
+if [ ! -e "$config_json" ]; then
+  deprintf "* Creating config.json under:\n    %s\n" "$TREE_SITTER_DIR/"
 
-  mkdir -p "${TREE_SITTER_DIR}"
+  mkdir -p "$TREE_SITTER_DIR"
 
-  cat << EOF > "${config_json}"
+  cat << EOF > "$config_json"
 {
   "parser-directories": [
     "."
@@ -84,12 +85,12 @@ if [ ! -e "${config_json}" ]; then
 EOF
 else
   eprintf "The file config.json already exists under:\n  %s\n" \
-          "${TREE_SITTER_DIR}/"
+          "$TREE_SITTER_DIR/"
   exit 1
 fi
 
-deprintf "\n"
+########################################################################
 
-cd "${cur_dir}" || exit 1
+cd "$cur_dir" || exit 1
 
-deprintf "Done\n"
+deprintf "%s: end\n" "$THIS_SCRIPT_NAME"

@@ -5,22 +5,32 @@ THIS_SCRIPT_DESC="Run tree-sitter dump-languages subcommand"
 
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
 
 # shellcheck source=.common
-. "${THIS_SCRIPT_DIR}/.common"
+. "$THIS_SCRIPT_DIR/.common"
 
 ########################################################################
 
 cur_dir=$(pwd)
 
-cd "${PARSER_PROJ_DIR}" || exit 1
+deprintf "%s: start\n" "$THIS_SCRIPT_NAME"
+
+cd "$PARSER_PROJ_DIR" || exit 1
+
+########################################################################
 
 # XXX: is this a broken way to do things?
-if [ "" != "${TREE_SITTER_DIR}" ]; then
-  export TREE_SITTER_DIR="${TREE_SITTER_DIR}"
+if [ "" != "$TREE_SITTER_DIR" ]; then
+  export TREE_SITTER_DIR="$TREE_SITTER_DIR"
 fi
 
-${ATSP_TS_PATH} dump-languages
+$ATSP_TS_PATH dump-languages
+result=$?
+
+deprintf "* dump-languages returned: %s\n" "$result"
+
+# XXX: check return value?
 
 # XXX: could try to capture above output and analyze
 #      to decide what to display below...
@@ -53,6 +63,8 @@ The atsp hack-symlink subcommand might be help too.
 
 EOF
 
-cd "${cur_dir}" || exit 1
+########################################################################
 
-printf "Done\n"
+cd "$cur_dir" || exit 1
+
+deprintf "%s: end\n" "$THIS_SCRIPT_NAME"

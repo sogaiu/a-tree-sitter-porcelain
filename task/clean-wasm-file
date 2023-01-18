@@ -2,26 +2,39 @@
 
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
 
 # shellcheck source=.common
-. "${THIS_SCRIPT_DIR}/.common"
+. "$THIS_SCRIPT_DIR/.common"
 
 ########################################################################
 
 cur_dir=$(pwd)
 
-cd "${PARSER_PROJ_DIR}" || exit 1
+deprintf "%s: start\n" "$THIS_SCRIPT_NAME"
 
-if [ $# -eq 0 ]; then
-  deprintf "Cleaning wasm file\n"
+cd "$PARSER_PROJ_DIR" || exit 1
+
+########################################################################
+
+parser_wasm=$("$ATSP_UTIL"/wasm-name)
+
+cmd="rm -f $parser_wasm"
+
+deprintf "* Invoking:\n"
+deprintf "    %s\n" "$cmd"
+
+eval "$cmd"
+result=$?
+
+if [ 0 -ne "$result" ]; then
+  eprintf "* Cleaning failed: %s.\n" "$result"
+  eprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
+  exit 1
 fi
 
-parser_wasm=$("${ATSP_UTIL}"/wasm-name)
+########################################################################
 
-rm -f "${parser_wasm}"
+cd "$cur_dir" || exit 1
 
-cd "${cur_dir}" || exit 1
-
-if [ $# -eq 0 ]; then
-  deprintf "Done\n"
-fi
+deprintf "%s: end\n" "$THIS_SCRIPT_NAME"

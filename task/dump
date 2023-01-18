@@ -7,11 +7,11 @@ THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 # XXX: save before they are messed with
-OLD_TREE_SITTER_DIR=${TREE_SITTER_DIR}
-OLD_TREE_SITTER_LIBDIR=${TREE_SITTER_LIBDIR}
+OLD_TREE_SITTER_DIR=$TREE_SITTER_DIR
+OLD_TREE_SITTER_LIBDIR=$TREE_SITTER_LIBDIR
 
 # shellcheck source=.common
-. "${THIS_SCRIPT_DIR}/.common"
+. "$THIS_SCRIPT_DIR/.common"
 
 ########################################################################
 
@@ -29,7 +29,7 @@ MIN_VERSION=0.20.8
 #      have been overriden.  that may be the only thing so
 #      far though
 
-if diff "${SO_BUILD_PATH}" "${INSTALLED_SO_PATH}" 2> /dev/null; then
+if diff "$SO_BUILD_PATH" "$INSTALLED_SO_PATH" 2> /dev/null; then
     SOS_SAME="Yes"
 else
     SOS_SAME="No"
@@ -42,36 +42,36 @@ fi
 # needed in Makefile
 # * install target depends on it
 # * INSTALLED_SO_PATH target depends on it
-# 
-SO_BUILD_PATH=$("${ATSP_UTIL}"/so-build-path "${BUILD_DIR_PATH}")
+#
+SO_BUILD_PATH=$("$ATSP_UTIL"/so-build-path "$BUILD_DIR_PATH")
 
 # parser wasm file name
-PARSER_WASM=$("${ATSP_UTIL}"/wasm-name)
+PARSER_WASM=$("$ATSP_UTIL"/wasm-name)
 # (full?) path to parser wasm file name
-PARSER_WASM_PATH=${PARSER_PROJ_DIR}/${PARSER_WASM}
+PARSER_WASM_PATH=$PARSER_PROJ_DIR/$PARSER_WASM
 
 # XXX: should be set via .common via conf (required in conf)
 #printf "ATSP_LANG: %s\n" "$("${ATSP_UTIL}"/atsp-lang)"
-printf "ATSP_LANG: %s\n" "${ATSP_LANG}"
-printf "PARSER_PROJ_DIR: %s\n" "${PARSER_PROJ_DIR}"
+printf "ATSP_LANG: %s\n" "$ATSP_LANG"
+printf "PARSER_PROJ_DIR: %s\n" "$PARSER_PROJ_DIR"
 echo
-printf "ATSP_TS_PATH: %s\n" "${ATSP_TS_PATH}"
+printf "ATSP_TS_PATH: %s\n" "$ATSP_TS_PATH"
 echo
-printf "MIN_VERSION: %s\n" "${MIN_VERSION}"
+printf "MIN_VERSION: %s\n" "$MIN_VERSION"
 echo
-printf "OLD_TREE_SITTER_DIR: %s\n" "${OLD_TREE_SITTER_DIR}"
-printf "TREE_SITTER_DIR: %s\n" "${TREE_SITTER_DIR}"
-printf "OLD_TREE_SITTER_LIBDIR: %s\n" "${OLD_TREE_SITTER_LIBDIR}"
-printf "TREE_SITTER_LIBDIR: %s\n" "${TREE_SITTER_LIBDIR}"
+printf "OLD_TREE_SITTER_DIR: %s\n" "$OLD_TREE_SITTER_DIR"
+printf "TREE_SITTER_DIR: %s\n" "$TREE_SITTER_DIR"
+printf "OLD_TREE_SITTER_LIBDIR: %s\n" "$OLD_TREE_SITTER_LIBDIR"
+printf "TREE_SITTER_LIBDIR: %s\n" "$TREE_SITTER_LIBDIR"
 echo
-printf "SO_INSTALL_DIR: %s\n" "${SO_INSTALL_DIR}"
+printf "SO_INSTALL_DIR: %s\n" "$SO_INSTALL_DIR"
 echo
-printf "BUILD_DIR_NAME: %s\n" "${BUILD_DIR_NAME}"
-printf "BUILD_DIR_PATH: %s\n" "${BUILD_DIR_PATH}"
+printf "BUILD_DIR_NAME: %s\n" "$BUILD_DIR_NAME"
+printf "BUILD_DIR_PATH: %s\n" "$BUILD_DIR_PATH"
 echo
-printf "PARSER_WASM: %s\n" "${PARSER_WASM}"
-printf "PARSER_WASM_PATH: %s\n" "${PARSER_WASM_PATH}"
+printf "PARSER_WASM: %s\n" "$PARSER_WASM"
+printf "PARSER_WASM_PATH: %s\n" "$PARSER_WASM_PATH"
 echo
-printf "INSTALLED_SO_PATH: %s\n" "${INSTALLED_SO_PATH}"
+printf "INSTALLED_SO_PATH: %s\n" "$INSTALLED_SO_PATH"
 echo
-printf "SOS_SAME: %s\n" "${SOS_SAME}"
+printf "SOS_SAME: %s\n" "$SOS_SAME"

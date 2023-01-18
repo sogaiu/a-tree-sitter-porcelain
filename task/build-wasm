@@ -8,33 +8,57 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
 
 # shellcheck source=.common
-. "${THIS_SCRIPT_DIR}/.common"
+. "$THIS_SCRIPT_DIR/.common"
+
+dep_script="gen-src"
 
 ########################################################################
 
 cur_dir=$(pwd)
 
-deprintf "Working on building parser .wasm.\n"
+deprintf "%s: start\n" "$THIS_SCRIPT_NAME"
 
-cd "${PARSER_PROJ_DIR}" || exit 1
+cd "$PARSER_PROJ_DIR" || exit 1
 
-deprintf "\n"
+########################################################################
 
-if [ -f src/parser.c ]; then
-  deprintf "* Found src/parser.c.\n"
+# this section is all about prerequisites
+
+do_dep=${ATSP_FORCE:-0}
+
+# decide whether to execute dependency script
+if [ 1 -eq "$do_dep" ]; then
+  deprintf "* Unconditionally executing %s.\n" "$dep_script"
 else
-  deprintf "* Failed to find src/parser.c...attempting to generate.\n"
+  deprintf "* Looking for parser source at:\n"
+  deprintf "    %s\n" "src/parser.c"
 
-  "${THIS_SCRIPT_DIR}"/gen-src
+  if [ -f src/parser.c ]; then
+    deprintf "* Found it.\n"
+  else
+    deprintf "* Failed to find it.\n"
+    do_dep=1
+  fi
+fi
+
+# executing dependency script if necessary
+if [ 1 -eq "$do_dep" ]; then
+  deprintf "* Calling %s.\n" "$dep_script"
+
+  "$THIS_SCRIPT_DIR"/"$dep_script"
   result=$?
 
-  if [ 0 -eq "${result}" ]; then
-    deprintf "* Continuing with %s.\n" "${THIS_SCRIPT_NAME}"
+  if [ 0 -eq "$result" ]; then
+    deprintf "%s: resume\n" "$THIS_SCRIPT_NAME"
   else
-    eprintf "* Aborting %s\n" "${THIS_SCRIPT_NAME}"
+    eprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
     exit 1
   fi
 fi
+
+########################################################################
+
+# the rest of the file is about actually carrying things out
 
 # XXX: the following may be brittle as it depends on emscripten
 #      internals.
@@ -71,56 +95,66 @@ fi
 ### start duplication
 
 # try getting a value from conf file
-emsdk=${ATSP_EMSDK:-"$("${ATSP_UTIL}"/atsp-emsdk)"}
+emsdk=${ATSP_EMSDK:-"$("$ATSP_UTIL"/atsp-emsdk)"}
 
-if [ "" = "${emsdk}" ]; then
+if [ "" = "$emsdk" ]; then
  eprintf "* Did not find an appropriate value for emsdk directory\n"
  exit 1
 fi
 
-if [ ! -d "${emsdk}" ]; then
- eprintf "* emsdk value not a directory: %s\n" "${emsdk}"
+if [ ! -d "$emsdk" ]; then
+ eprintf "* emsdk value not a directory: %s\n" "$emsdk"
  exit 1
 fi
 
-emsdk=$(realpath "${emsdk}")
+emsdk=$(realpath "$emsdk")
 
-deprintf "* emsdk: %s\n" "${emsdk}"
+deprintf "* emsdk: %s\n" "$emsdk"
 
 # some consistency checking
 #
 # XXX: this should work as long as emsdk_env.* keeps setting the
 #      EMSDK_NODE env var?
-if [ ! -d "${emsdk}/node" ]; then
-  eprintf "* emsdk directory doesn't look right: %s\n" "${emsdk}"
+if [ ! -d "$emsdk/node" ]; then
+  eprintf "* emsdk directory doesn't look right: %s\n" "$emsdk"
   exit 1
 fi
 
 ### end duplication
 
-emscripten="${emsdk}/upstream/emscripten"
+emscripten="$emsdk/upstream/emscripten"
 
 # XXX: is there a guarantee that this will yield a single value?
 # XXX: validate node_version value somehow?
-node_version=$(ls "${emsdk}/node")
+node_version=$(ls "$emsdk/node")
 
-node_bin_dir_path="${emsdk}/node/${node_version}/bin"
-emsdk_node="${node_bin_dir_path}/node"
+node_bin_dir_path="$emsdk/node/$node_version/bin"
+emsdk_node="$node_bin_dir_path/node"
 
-export EMSDK="${emsdk}"
-export EMSDK_NODE="${emsdk_node}"
-export PATH="${emsdk}:${emscripten}:${node_bin_dir_path}:${PATH}"
-
-deprintf "* Invoking tree-sitter build-wasm subcommand\n"
+export EMSDK="$emsdk"
+export EMSDK_NODE="$emsdk_node"
+export PATH="$emsdk:$emscripten:$node_bin_dir_path:$PATH"
 
 # XXX: possibly need to make TREE_SITTER_DIR / TREE_SITTER_LIBDIR
 #      available via export?  don't think so as those are only
 #      necessary for parsing-like activities?
 
-${ATSP_TS_PATH} build-wasm
+cmd="$ATSP_TS_PATH build-wasm"
 
-deprintf "\n"
+deprintf "* Invoking:\n"
+deprintf "    %s\n" "$cmd"
 
-cd "${cur_dir}" || exit 1
+eval "$cmd"
+result=$?
 
-deprintf "Done\n"
+if [ 0 -ne "$result" ]; then
+  eprintf "* Building failed: %s.\n" "$result"
+  eprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
+  exit 1
+fi
+
+########################################################################
+
+cd "$cur_dir" || exit 1
+
+deprintf "%s: end\n" "$THIS_SCRIPT_NAME"

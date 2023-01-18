@@ -5,41 +5,44 @@ THIS_SCRIPT_DESC="Perform diagnostics and report"
 
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
 
 # capture before being overwritten
-old_tree_sitter_dir="${TREE_SITTER_DIR}"
-old_tree_sitter_libdir="${TREE_SITTER_LIBDIR}"
+old_tree_sitter_dir="$TREE_SITTER_DIR"
+old_tree_sitter_libdir="$TREE_SITTER_LIBDIR"
 
 # shellcheck source=.common
-. "${THIS_SCRIPT_DIR}/.common"
+. "$THIS_SCRIPT_DIR/.common"
 
 ########################################################################
 
 cur_dir=$(pwd)
 
-cd "${PARSER_PROJ_DIR}" || exit 1
+deprintf "%s: start\n" "$THIS_SCRIPT_NAME"
+
+cd "$PARSER_PROJ_DIR" || exit 1
 
 ########################################################################
 
+printf "\n"
 printf "tree-sitter\n"
-
 printf "\n"
 
-if [ "" = "${ATSP_TS_PATH}" ]; then
+if [ "" = "$ATSP_TS_PATH" ]; then
   printf "* ATSP_TS_PATH not set."
   exit 1
 fi
 
 # XXX: is this correct?
-if [ ! -e "$(realpath "${ATSP_TS_PATH}")" ] && \
-   [ "" = "$(which "${ATSP_TS_PATH}")" ]; then
-  printf "* cli not found at: %s\n" "${ATSP_TS_PATH}"
+if [ ! -e "$(realpath "$ATSP_TS_PATH")" ] && \
+   [ "" = "$(which "$ATSP_TS_PATH")" ]; then
+  printf "* cli not found at: %s\n" "$ATSP_TS_PATH"
   exit 1
 fi
 
 printf "* Located binary\n"
 
-printf "* ATSP_TS_PATH: %s\n" "${ATSP_TS_PATH}"
+printf "* ATSP_TS_PATH: %s\n" "$ATSP_TS_PATH"
 
 # example tree-sitter --version output:
 #
@@ -52,12 +55,10 @@ printf "* version: %s\n" "$($ATSP_TS_PATH --version | cut -d' ' -f2)"
 # also remove surrounding parens -- otherwise can interfere with things
 printf "* commit: %s\n" "$($ATSP_TS_PATH --version | cut -d' ' -f3 | tr -d '()')"
 
-printf "\n"
-
 ########################################################################
 
+printf "\n"
 printf "emsdk\n"
-
 printf "\n"
 
 # XXX: this was taken from build-wasm...should not be duplicating...
@@ -65,28 +66,28 @@ printf "\n"
 ### start duplication
 
 # try getting a value from conf file
-emsdk=${ATSP_EMSDK:-"$("${ATSP_UTIL}"/atsp-emsdk)"}
+emsdk=${ATSP_EMSDK:-"$("$ATSP_UTIL"/atsp-emsdk)"}
 
-if [ "" = "${emsdk}" ]; then
- printf "* Did not find an appropriate value for emsdk directory\n"
+if [ "" = "$emsdk" ]; then
+ eprintf "* Did not find an appropriate value for emsdk directory\n"
  exit 1
 fi
 
-if [ ! -d "${emsdk}" ]; then
- printf "* emsdk value not a directory: %s\n" "${emsdk}"
+if [ ! -d "$emsdk" ]; then
+ eprintf "* emsdk value not a directory: %s\n" "$emsdk"
  exit 1
 fi
 
-emsdk=$(realpath "${emsdk}")
+emsdk=$(realpath "$emsdk")
 
-printf "* emsdk: %s\n" "${emsdk}"
+printf "* emsdk: %s\n" "$emsdk"
 
 # some consistency checking
 #
 # XXX: this should work as long as emsdk_env.* keeps setting the
 #      EMSDK_NODE env var?
-if [ ! -d "${emsdk}/node" ]; then
-  printf "* emsdk directory doesn't look right: %s\n" "${emsdk}"
+if [ ! -d "$emsdk/node" ]; then
+  eprintf "* emsdk directory doesn't look right: %s\n" "$emsdk"
   exit 1
 fi
 
@@ -102,42 +103,38 @@ printf "    ./emsdk list | grep INSTALLED\n"
 
 printf "  in:\n"
 
-printf "    %s\n" "${emsdk}"
-
-printf "\n"
+printf "    %s\n" "$emsdk"
 
 ########################################################################
 
+printf "\n"
 printf "Some TREE_SITTER_* environment variables\n"
-
 printf "\n"
 
 printf "* In the original environment:\n"
 
-printf "  * TREE_SITTER_DIR was: %s\n" "${old_tree_sitter_dir}"
+printf "  * TREE_SITTER_DIR was: %s\n" "$old_tree_sitter_dir"
 
-printf "  * TREE_SITTER_LIBDIR was: %s\n" "${old_tree_sitter_libdir}"
+printf "  * TREE_SITTER_LIBDIR was: %s\n" "$old_tree_sitter_libdir"
 
 printf "* atsp may have massaged these to:\n"
 
-printf "  * TREE_SITTER_DIR: %s\n" "${TREE_SITTER_DIR}"
+printf "  * TREE_SITTER_DIR: %s\n" "$TREE_SITTER_DIR"
 
-printf "  * TREE_SITTER_LIBDIR: %s\n" "${TREE_SITTER_LIBDIR}"
-
-printf "\n"
+printf "  * TREE_SITTER_LIBDIR: %s\n" "$TREE_SITTER_LIBDIR"
 
 ########################################################################
 
+printf "\n"
 printf "atsp's conf file currently contains:\n"
-
 printf "\n"
 
-cat "${ATSP_CONF}"
+cat "$ATSP_CONF"
 
 printf "\n"
 
 ########################################################################
 
-cd "${cur_dir}" || exit 1
+cd "$cur_dir" || exit 1
 
-printf "Done\n"
+deprintf "%s: end\n" "$THIS_SCRIPT_NAME"

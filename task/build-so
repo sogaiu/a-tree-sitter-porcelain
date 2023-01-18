@@ -8,39 +8,65 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
 
 # shellcheck source=.common
-. "${THIS_SCRIPT_DIR}/.common"
+. "$THIS_SCRIPT_DIR/.common"
+
+dep_script="gen-src"
 
 ########################################################################
 
 cur_dir=$(pwd)
 
-cd "${PARSER_PROJ_DIR}" || exit 1
+deprintf "%s: start\n" "$THIS_SCRIPT_NAME"
 
-deprintf "Working on building shared object.\n";
+cd "$PARSER_PROJ_DIR" || exit 1
 
-if [ -f src/parser.c ]; then
-  deprintf "* Found src/parser.c.\n"
+########################################################################
+
+# this section is all about prerequisites
+
+do_dep=${ATSP_FORCE:-0}
+
+# decide whether to execute dependency script
+if [ 1 -eq "$do_dep" ]; then
+  deprintf "* Unconditionally executing %s.\n" "$dep_script"
 else
-  deprintf "* Failed to find src/parser.c...attempting to generate.\n"
+  deprintf "* Looking for parser source at:\n"
+  deprintf "    %s\n" "src/parser.c"
 
-  "${THIS_SCRIPT_DIR}"/gen-src
+  if [ -f src/parser.c ]; then
+    deprintf "* Found it.\n"
+  else
+    deprintf "* Failed to it.\n"
+    do_dep=1
+  fi
+fi
+
+# executing dependency script if necessary
+if [ 1 -eq "$do_dep" ]; then
+  deprintf "* Calling %s.\n" "$dep_script"
+
+  "$THIS_SCRIPT_DIR"/"$dep_script"
   result=$?
 
-  if [ 0 -eq "${result}" ]; then
-    deprintf "* Continuing with %s.\n" "${THIS_SCRIPT_NAME}"
+  if [ 0 -eq "$result" ]; then
+    deprintf "%s: resume\n" "$THIS_SCRIPT_NAME"
   else
-    eprintf "* Aborting %s\n" "${THIS_SCRIPT_NAME}"
+    eprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
     exit 1
   fi
 fi
 
+########################################################################
+
+# the rest of the file is about actually carrying things out
+
 deprintf "* Ensuring build directory exists at:\n"
 
-deprintf "    %s\n" "${BUILD_DIR_PATH}"
+deprintf "    %s\n" "$BUILD_DIR_PATH"
 
-mkdir -p "${BUILD_DIR_PATH}"
+mkdir -p "$BUILD_DIR_PATH"
 
-so_name=$("${ATSP_UTIL}"/so-name)
+so_name=$("$ATSP_UTIL"/so-name)
 
 # XXX: not relying on the tree-sitter cli for building seems more
 #      flexible.
@@ -53,30 +79,71 @@ so_name=$("${ATSP_UTIL}"/so-name)
 #      running the invocation again.  that kind of thing seems like it
 #      could be avoided by externalization as is dones below.
 deprintf "* Compiling parser\n"
-cc -fPIC -c -Isrc src/parser.c -o "${BUILD_DIR_PATH}/parser.o"
 
-if [ -f src/scanner.c ]; then
-  deprintf "* Compiling scanner\n"
-  cc -fPIC -c -Isrc src/scanner.c -o "${BUILD_DIR_PATH}/scanner.o"
+cmd="cc -fPIC -c -Isrc src/parser.c -o $BUILD_DIR_PATH/parser.o"
+
+deprintf "* Invoking:\n"
+deprintf "    %s\n" "$cmd"
+
+eval "$cmd"
+result=$?
+
+if [ 0 -ne "$result" ]; then
+  eprintf "* Compiling failed: %s.\n" "$result"
+  eprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
+  exit 1
 fi
 
-if [ -f src/scanner.cc ]; then
+has_scanner=0
+
+if [ -f src/scanner.c ]; then
+  cmd="cc -fPIC -c -Isrc src/scanner.c -o $BUILD_DIR_PATH/scanner.o"
+  has_scanner=1
+elif [ -f src/scanner.cc ]; then
+  cmd="c++ -fPIC -Isrc -c src/scanner.cc -o $BUILD_DIR_PATH/scanner.o"
+  has_scanner=1
+fi
+
+if [ 1 -eq "$has_scanner" ]; then
   deprintf "* Compiling scanner\n"
-  c++ -fPIC -Isrc -c src/scanner.cc -o "${BUILD_DIR_PATH}/scanner.o"
+
+  deprintf "* Invoking:\n"
+  deprintf "    %s\n" "$cmd"
+
+  eval "$cmd"
+  result=$?
+
+  if [ 0 -ne "$result" ]; then
+    eprintf "* Compiling failed: %s.\n" "$result"
+    eprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
+    exit 1
+  fi
 fi
 
 deprintf "* Linking\n"
 if [ -f src/scanner.cc ]; then
-  c++ -fPIC -shared "${BUILD_DIR_PATH}"/*.o \
-      -o "${BUILD_DIR_PATH}/${so_name}"
+  cmd="c++ -fPIC -shared $BUILD_DIR_PATH/*.o -o $BUILD_DIR_PATH/$so_name"
 else
-  cc -fPIC -shared "${BUILD_DIR_PATH}"/*.o \
-      -o "${BUILD_DIR_PATH}/${so_name}"
+  cmd="cc -fPIC -shared $BUILD_DIR_PATH/*.o -o $BUILD_DIR_PATH/$so_name"
+fi
+
+deprintf "* Invoking:\n"
+deprintf "    %s\n" "$cmd"
+
+eval "$cmd"
+result=$?
+
+if [ 0 -ne "$result" ]; then
+  eprintf "* Linking failed: %s.\n" "$result"
+  eprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
+  exit 1
 fi
 
 deprintf "* Result is at:\n"
-deprintf "    %s\n" "${BUILD_DIR_PATH}/${so_name}"
+deprintf "    %s\n" "$BUILD_DIR_PATH/$so_name"
 
-cd "${cur_dir}" || exit 1
+########################################################################
 
-deprintf "Done\n"
+cd "$cur_dir" || exit 1
+
+deprintf "%s: end\n" "$THIS_SCRIPT_NAME"

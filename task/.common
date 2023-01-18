@@ -9,14 +9,14 @@
 THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
-ATSP_ROOT=$(realpath "${THIS_SCRIPT_DIR}/..")
+ATSP_ROOT=$(realpath "$THIS_SCRIPT_DIR/..")
 
-ATSP_CONF="${ATSP_ROOT}"/conf
-ATSP_TASK="${ATSP_ROOT}"/task
-ATSP_UTIL="${ATSP_ROOT}"/util
+ATSP_CONF="$ATSP_ROOT"/conf
+ATSP_TASK="$ATSP_ROOT"/task
+ATSP_UTIL="$ATSP_ROOT"/util
 
 # shellcheck source=../conf
-. "${ATSP_CONF}"
+. "$ATSP_CONF"
 
 # the parser project directory
 PARSER_PROJ_DIR=$(realpath "$THIS_SCRIPT_DIR"/../..)
@@ -43,7 +43,7 @@ PARSER_PROJ_DIR=$(realpath "$THIS_SCRIPT_DIR"/../..)
 #      same version string
 ATSP_TS_PATH=${ATSP_TS_PATH:-tree-sitter}
 
-TREE_SITTER_DIR=${TREE_SITTER_DIR:-${PARSER_PROJ_DIR}/.tree-sitter}
+TREE_SITTER_DIR=${TREE_SITTER_DIR:-$PARSER_PROJ_DIR/.tree-sitter}
 
 # XXX: the env var TREE_SITTER_LIBDIR only affects the tree-sitter cli
 #      for versions beyond 0.20.7 -- we use it here for convenient
@@ -51,14 +51,14 @@ TREE_SITTER_DIR=${TREE_SITTER_DIR:-${PARSER_PROJ_DIR}/.tree-sitter}
 #      that instead
 
 # XXX: if computed, same as via the so-install-dir util script below
-TREE_SITTER_LIBDIR=${TREE_SITTER_LIBDIR:-${TREE_SITTER_DIR}/lib}
+TREE_SITTER_LIBDIR=${TREE_SITTER_LIBDIR:-$TREE_SITTER_DIR/lib}
 
 # XXX: can we not just use TREE_SITTER_LIBDIR?
 # where the shared object is looked for by tree-sitter cli
-SO_INSTALL_DIR=$("${ATSP_UTIL}"/so-install-dir "${TREE_SITTER_DIR}")
+SO_INSTALL_DIR=$("$ATSP_UTIL"/so-install-dir "$TREE_SITTER_DIR")
 
 # path to installed shared object
-INSTALLED_SO_PATH=$("${ATSP_UTIL}"/installed-so-path "${SO_INSTALL_DIR}")
+INSTALLED_SO_PATH=$("$ATSP_UTIL"/installed-so-path "$SO_INSTALL_DIR")
 
 # build directory for shared object
 #
@@ -79,10 +79,9 @@ INSTALLED_SO_PATH=$("${ATSP_UTIL}"/installed-so-path "${SO_INSTALL_DIR}")
 #       build can also contain node or rust bindings.  don't want to
 #       accidentally delete those
 
-# XXX: could have a script that fetches a default value - reduce duplication
-#      with Makefile?
+# XXX: could have a script that fetches a default value
 BUILD_DIR_NAME=${BUILD_DIR_NAME:-build/atsp}
-BUILD_DIR_PATH=${PARSER_PROJ_DIR}/${BUILD_DIR_NAME}
+BUILD_DIR_PATH=$PARSER_PROJ_DIR/$BUILD_DIR_NAME
 
 ########################################################################
 
@@ -94,8 +93,7 @@ eprintf() {
 }
 
 deprintf() {
-  if [ 1 -eq "${verbose}" ]; then
+  if [ 1 -eq "$verbose" ]; then
     eprintf "$@" 1>&2
   fi
 }
-
