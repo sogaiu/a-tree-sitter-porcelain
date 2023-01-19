@@ -1,14 +1,14 @@
 #! /bin/sh
 
 # shellcheck disable=SC2034
-THIS_SCRIPT_DESC="Start tree-sitter playground"
+this_script_desc="Start tree-sitter playground"
 
-THIS_SCRIPT=$(readlink -f "$0")
-THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
-THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
+this_script=$(readlink -f "$0")
+this_script_dir=$(dirname "$this_script")
+this_script_name=$(basename "$this_script")
 
 # shellcheck source=.common
-. "${THIS_SCRIPT_DIR}/.common"
+. "${this_script_dir}/.common"
 
 dep_script="build-wasm"
 
@@ -33,7 +33,7 @@ cleanup () {
 
 cur_dir=$(pwd)
 
-deprintf "%s: start\n" "$THIS_SCRIPT_NAME"
+deprintf "%s: start\n" "$this_script_name"
 
 cd "$PARSER_PROJ_DIR" || exit 1
 
@@ -65,13 +65,13 @@ fi
 if [ 1 -eq "$do_dep" ]; then
   deprintf "* Calling %s.\n" "$dep_script"
 
-  "$THIS_SCRIPT_DIR"/build-wasm
+  "$this_script_dir"/build-wasm
   result=$?
 
   if [ 0 -eq "$result" ]; then
-    deprintf "%s: resume\n" "$THIS_SCRIPT_NAME"
+    deprintf "%s: resume\n" "$this_script_name"
   else
-    eprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
+    eprintf "%s: abort\n" "$this_script_name"
     exit 1
   fi
 fi
@@ -86,7 +86,7 @@ result=$?
 
 if [ 0 -ne "$result" ]; then
   eprintf "* Playground aborted: %s.\n" "$result"
-  eprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
+  eprintf "%s: abort\n" "$this_script_name"
   exit 1
 fi
 
@@ -94,5 +94,5 @@ fi
 
 cd "$cur_dir" || exit 1
 
-deprintf "%s: end\n" "$THIS_SCRIPT_NAME"
+deprintf "%s: end\n" "$this_script_name"
 

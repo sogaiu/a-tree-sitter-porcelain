@@ -1,24 +1,24 @@
 #! /bin/sh
 
 # shellcheck disable=SC2034
-THIS_SCRIPT_DESC="Perform diagnostics and report"
+this_script_desc="Perform diagnostics and report"
 
-THIS_SCRIPT=$(readlink -f "$0")
-THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
-THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
+this_script=$(readlink -f "$0")
+this_script_dir=$(dirname "$this_script")
+this_script_name=$(basename "$this_script")
 
 # capture before being overwritten
 old_tree_sitter_dir="$TREE_SITTER_DIR"
 old_tree_sitter_libdir="$TREE_SITTER_LIBDIR"
 
 # shellcheck source=.common
-. "$THIS_SCRIPT_DIR/.common"
+. "$this_script_dir/.common"
 
 ########################################################################
 
 cur_dir=$(pwd)
 
-deprintf "%s: start\n" "$THIS_SCRIPT_NAME"
+deprintf "%s: start\n" "$this_script_name"
 
 cd "$PARSER_PROJ_DIR" || exit 1
 
@@ -137,4 +137,4 @@ printf "\n"
 
 cd "$cur_dir" || exit 1
 
-deprintf "%s: end\n" "$THIS_SCRIPT_NAME"
+deprintf "%s: end\n" "$this_script_name"

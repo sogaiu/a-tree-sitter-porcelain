@@ -1,20 +1,20 @@
 #! /bin/sh
 
 # shellcheck disable=SC2034
-THIS_SCRIPT_DESC="Generate grammar source under src"
+this_script_desc="Generate grammar source under src"
 
-THIS_SCRIPT=$(readlink -f "$0")
-THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
-THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
+this_script=$(readlink -f "$0")
+this_script_dir=$(dirname "$this_script")
+this_script_name=$(basename "$this_script")
 
 # shellcheck source=.common
-. "$THIS_SCRIPT_DIR/.common"
+. "$this_script_dir/.common"
 
 ########################################################################
 
 cur_dir=$(pwd)
 
-deprintf "%s: start\n" "$THIS_SCRIPT_NAME"
+deprintf "%s: start\n" "$this_script_name"
 
 cd "$PARSER_PROJ_DIR" || exit 1
 
@@ -26,7 +26,7 @@ if [ -f grammar.js ]; then
   deprintf "* Found.\n"
 else
   eprintf "* Failed to find.\n"
-  eprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
+  eprintf "%s: abort\n" "$this_script_name"
   exit 1
 fi
 
@@ -45,7 +45,7 @@ result=$?
 
 if [ 0 -ne "$result" ]; then
   eprintf "* Generating source failed: %s.\n" "$result"
-  eprintf "%s: abort\n" "$THIS_SCRIPT_NAME"
+  eprintf "%s: abort\n" "$this_script_name"
   exit 1
 fi
 
@@ -53,4 +53,4 @@ fi
 
 cd "$cur_dir" || exit 1
 
-deprintf "%s: end\n" "$THIS_SCRIPT_NAME"
+deprintf "%s: end\n" "$this_script_name"

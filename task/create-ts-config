@@ -1,20 +1,20 @@
 #! /bin/sh
 
 # shellcheck disable=SC2034
-THIS_SCRIPT_DESC="Create tree-sitter config.json if needed"
+this_script_desc="Create tree-sitter config.json if needed"
 
-THIS_SCRIPT=$(readlink -f "$0")
-THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
-THIS_SCRIPT_NAME=$(basename "$THIS_SCRIPT")
+this_script=$(readlink -f "$0")
+this_script_dir=$(dirname "$this_script")
+this_script_name=$(basename "$this_script")
 
 # shellcheck source=.common
-. "$THIS_SCRIPT_DIR/.common"
+. "$this_script_dir/.common"
 
 ########################################################################
 
 cur_dir=$(pwd)
 
-deprintf "%s: start\n" "$THIS_SCRIPT_NAME"
+deprintf "%s: start\n" "$this_script_name"
 
 cd "$PARSER_PROJ_DIR" || exit 1
 
@@ -93,4 +93,4 @@ fi
 
 cd "$cur_dir" || exit 1
 
-deprintf "%s: end\n" "$THIS_SCRIPT_NAME"
+deprintf "%s: end\n" "$this_script_name"
