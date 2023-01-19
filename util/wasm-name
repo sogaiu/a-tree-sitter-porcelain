@@ -1,11 +1,11 @@
 #! /bin/sh
 
-THIS_SCRIPT=$(readlink -f "$0")
-THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+this_script=$(readlink -f "$0")
+this_script_dir=$(dirname "$this_script")
 
 ########################################################################
 
-lang=$("$THIS_SCRIPT_DIR"/atsp-lang)
+lang=$("$this_script_dir"/atsp-lang)
 
 underscore_name=$(echo "$lang" | tr '-' '_')
 

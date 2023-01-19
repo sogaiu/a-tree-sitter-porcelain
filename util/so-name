@@ -1,14 +1,14 @@
 #! /bin/sh
 
-THIS_SCRIPT=$(readlink -f "$0")
-THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+this_script=$(readlink -f "$0")
+this_script_dir=$(dirname "$this_script")
 
 ########################################################################
 
-# XXX: should anything be done about - vs _?
+# xxx: should anything be done about - vs _?
 #      wasm-name changes - to _
-lang=$("$THIS_SCRIPT_DIR"/atsp-lang)
+lang=$("$this_script_dir"/atsp-lang)
 
-so_ext=$("$THIS_SCRIPT_DIR"/so-ext)
+so_ext=$("$this_script_dir"/so-ext)
 
 echo "$lang.$so_ext"

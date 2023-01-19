@@ -3,23 +3,25 @@
 # XXX: run this from the directory this is in
 
 # shellcheck disable=SC2034
-THIS_SCRIPT_DESC="Setup atsp"
+this_script_desc="Setup atsp"
 
-THIS_SCRIPT=$(readlink -f "$0")
-THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+this_script=$(readlink -f "$0")
+this_script_dir=$(dirname "$this_script")
 
-printf "%s\n" "${THIS_SCRIPT}"
+printf "%s\n" "${this_script}"
 
 # XXX: one-time...should the name be lower case?
-PARSER_PROJ_DIR=$(realpath ..)
+ATSP_LANG_ROOT=$(realpath ..)
 
 ########################################################################
 
 cur_dir=$(pwd)
 
-cd "${PARSER_PROJ_DIR}" || exit 1
+cd "${ATSP_LANG_ROOT}" || exit 1
 
-grammar_js_line=$(grep '^\s*name:\s*' "${PARSER_PROJ_DIR}"/grammar.js)
+########################################################################
+
+grammar_js_line=$(grep '^\s*name:\s*' "${ATSP_LANG_ROOT}"/grammar.js)
 
 guess=$(echo "${grammar_js_line}" | \
         sed "s/\s*name:\s*'\([^']\+\)',/\1/")
@@ -38,7 +40,7 @@ fi
 if [ "${grammar_js_line}" != "${guess}" ]; then
   atsp_lang_guess="${guess}"
 else
-  atsp_lang_guess=$(basename "${PARSER_PROJ_DIR}" | \
+  atsp_lang_guess=$(basename "${ATSP_LANG_ROOT}" | \
                     sed 's/tree-sitter-//' | \
                     sed 's/\([^\.]\+\).*/\1/')
 fi
@@ -68,7 +70,7 @@ do
 done
 
 # XXX: too hard-wired?
-confpath=$(realpath "${THIS_SCRIPT_DIR}/conf")
+confpath=$(realpath "${this_script_dir}/conf")
 
 printf "Ok, I gathered '%s', please ensure the following line\n" \
        "${guess}"
@@ -88,6 +90,8 @@ printf "\n"
 printf "  %s\n" "${confpath}"
 
 printf "\n"
+
+########################################################################
 
 cd "${cur_dir}" || exit 1
 

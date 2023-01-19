@@ -25,8 +25,8 @@ set +o allexport
 ########################################################################
 
 # the parser project directory
-PARSER_PROJ_DIR=$(realpath "$this_script_dir"/../..)
-export PARSER_PROJ_DIR
+ATSP_LANG_ROOT=$(realpath "$this_script_dir"/../..)
+export ATSP_LANG_ROOT
 
 ########################################################################
 
@@ -51,7 +51,7 @@ export PARSER_PROJ_DIR
 ATSP_TS_PATH=${ATSP_TS_PATH:-tree-sitter}
 export ATSP_TS_PATH
 
-TREE_SITTER_DIR=${TREE_SITTER_DIR:-$PARSER_PROJ_DIR/.tree-sitter}
+TREE_SITTER_DIR=${TREE_SITTER_DIR:-$ATSP_LANG_ROOT/.tree-sitter}
 export TREE_SITTER_DIR
 
 # XXX: the env var TREE_SITTER_LIBDIR only affects the tree-sitter cli
@@ -69,8 +69,8 @@ SO_INSTALL_DIR=$("$ATSP_UTIL"/so-install-dir "$TREE_SITTER_DIR")
 export SO_INSTALL_DIR
 
 # path to installed shared object
-INSTALLED_SO_PATH=$("$ATSP_UTIL"/installed-so-path "$SO_INSTALL_DIR")
-export INSTALLED_SO_PATH
+SO_INSTALL_PATH=$("$ATSP_UTIL"/so-install-path "$SO_INSTALL_DIR")
+export SO_INSTALL_PATH
 
 # build directory for shared object
 #
@@ -91,10 +91,10 @@ export INSTALLED_SO_PATH
 #       build can also contain node or rust bindings.  don't want to
 #       accidentally delete those
 
-# XXX: could have a script that fetches a default value
-build_dir_name=${BUILD_DIR_NAME:-build/atsp}
-BUILD_DIR_PATH=$PARSER_PROJ_DIR/$build_dir_name
-export BUILD_DIR_PATH
+# XXX: could have a script that fetches a default value?
+build_dir_name=${ATSP_BUILD_DIR_NAME:-build/atsp}
+ATSP_BUILD_DIR=$ATSP_LANG_ROOT/$build_dir_name
+export ATSP_BUILD_DIR
 
 ########################################################################
 

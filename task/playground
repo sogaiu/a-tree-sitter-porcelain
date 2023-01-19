@@ -35,7 +35,7 @@ cur_dir=$(pwd)
 
 deprintf "%s: start\n" "$this_script_name"
 
-cd "$PARSER_PROJ_DIR" || exit 1
+cd "$ATSP_LANG_ROOT" || exit 1
 
 ########################################################################
 
@@ -44,7 +44,7 @@ cd "$PARSER_PROJ_DIR" || exit 1
 do_dep=${ATSP_FORCE:-0}
 
 parser_wasm=$("$ATSP_UTIL"/wasm-name)
-parser_wasm_path=$PARSER_PROJ_DIR/$parser_wasm
+parser_wasm_path=$ATSP_LANG_ROOT/$parser_wasm
 
 # decide whether to execute dependency script
 if [ 1 -eq "$do_dep" ]; then

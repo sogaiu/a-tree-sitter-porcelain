@@ -1,11 +1,11 @@
 #! /bin/sh
 
-THIS_SCRIPT=$(readlink -f "$0")
-THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
+this_script=$(readlink -f "$0")
+this_script_dir=$(dirname "$this_script")
 
 # XXX: should this be a script?
-ATSP_CONF=$(realpath "$THIS_SCRIPT_DIR"/../conf)
+ATSP_CONF=$(realpath "$this_script_dir"/../conf)
 
 ########################################################################
 
-"$THIS_SCRIPT_DIR"/get-conf "$ATSP_CONF" ATSP_EMSDK
+"$this_script_dir"/get-conf "$ATSP_CONF" ATSP_EMSDK

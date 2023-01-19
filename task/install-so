@@ -18,7 +18,7 @@ cur_dir=$(pwd)
 
 deprintf "%s: start\n" "$this_script_name"
 
-cd "$PARSER_PROJ_DIR" || exit 1
+cd "$ATSP_LANG_ROOT" || exit 1
 
 ########################################################################
 
@@ -27,16 +27,16 @@ cd "$PARSER_PROJ_DIR" || exit 1
 do_dep=${ATSP_FORCE:-0}
 
 so_name=$("$ATSP_UTIL"/so-name)
-so_path="$BUILD_DIR_PATH"/"$so_name"
+built_so_path="$ATSP_BUILD_DIR"/"$so_name"
 
 # decide whether to execute dependency script
 if [ 1 -eq "$do_dep" ]; then
   deprintf "* Unconditionally executing %s.\n" "$dep_script"
 else
   deprintf "* Looking for built shared object at:\n"
-  deprintf "    %s\n" "$so_path"
+  deprintf "    %s\n" "$built_so_path"
     
-  if [ -f "$so_path" ]; then
+  if [ -f "$built_so_path" ]; then
     deprintf "* Found.\n"
   else
     deprintf "* Failed to find.\n"
@@ -71,10 +71,10 @@ mkdir -p "$SO_INSTALL_DIR"
 
 #deprintf "* Copying shared object into place\n"
 
-cmd="cp $so_path $SO_INSTALL_DIR"
+cmd="cp $built_so_path $SO_INSTALL_DIR"
 
 #deprintf "  * so name: %s\n" "$so_name"
-#deprintf "  *  source: %s\n" "$BUILD_DIR_PATH/"
+#deprintf "  *  source: %s\n" "$ATSP_BUILD_DIR/"
 #deprintf "  *    dest: %s\n" "$SO_INSTALL_DIR/"
 
 deprintf "* Invoking:\n"

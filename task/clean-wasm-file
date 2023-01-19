@@ -13,7 +13,7 @@ cur_dir=$(pwd)
 
 deprintf "%s: start\n" "$this_script_name"
 
-cd "$PARSER_PROJ_DIR" || exit 1
+cd "$ATSP_LANG_ROOT" || exit 1
 
 ########################################################################
 
