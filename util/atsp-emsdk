@@ -4,8 +4,8 @@ THIS_SCRIPT=$(readlink -f "$0")
 THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 # XXX: should this be a script?
-ATSP_CONF=$(realpath "${THIS_SCRIPT_DIR}"/../conf)
+ATSP_CONF=$(realpath "$THIS_SCRIPT_DIR"/../conf)
 
 ########################################################################
 
-"${THIS_SCRIPT_DIR}"/get-conf "${ATSP_CONF}" ATSP_EMSDK
+"$THIS_SCRIPT_DIR"/get-conf "$ATSP_CONF" ATSP_EMSDK

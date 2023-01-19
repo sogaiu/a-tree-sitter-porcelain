@@ -4,20 +4,20 @@
 
 uname_s=$(uname -s)
 
-case ${uname_s} in
-    Linux)
-        so_ext=so
-        ;;
-    Darwin)
-        so_ext=dylib
-        ;;
-    MINGW64*)
-        so_ext=dll
-        ;;
-    *)
-        # XXX: warn?
-        so_ext=so
-        ;;
+case $uname_s in
+  Linux)
+    so_ext=so
+    ;;
+  Darwin)
+    so_ext=dylib
+    ;;
+  MINGW64*)
+    so_ext=dll
+    ;;
+  *)
+    # XXX: warn?
+    so_ext=so
+    ;;
 esac
 
-echo "${so_ext}"
+echo "$so_ext"

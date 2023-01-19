@@ -94,6 +94,6 @@ eprintf() {
 
 deprintf() {
   if [ 1 -eq "$verbose" ]; then
-    eprintf "$@" 1>&2
+    eprintf "$@"
   fi
 }

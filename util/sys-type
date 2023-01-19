@@ -2,20 +2,20 @@
 
 uname_s=$(uname -s)
 
-case ${uname_s} in
-    Linux)
-        sys_type=Linux
-        ;;
-    Darwin)
-        sys_type=Darwin
-        ;;
-    MINGW64*)
-        sys_type=MINGW64
-        ;;
-    *)
-        # XXX: warn?
-        sys_type=UNKNOWN
-        ;;
+case $uname_s in
+  Linux)
+    sys_type=Linux
+    ;;
+  Darwin)
+    sys_type=Darwin
+    ;;
+  MINGW64*)
+    sys_type=MINGW64
+    ;;
+  *)
+    # XXX: warn?
+    sys_type=UNKNOWN
+    ;;
 esac
 
-echo "${sys_type}"
+echo "$sys_type"

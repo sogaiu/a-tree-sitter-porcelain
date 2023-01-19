@@ -7,8 +7,8 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 # XXX: should anything be done about - vs _?
 #      wasm-name changes - to _
-lang=$("${THIS_SCRIPT_DIR}"/atsp-lang)
+lang=$("$THIS_SCRIPT_DIR"/atsp-lang)
 
-so_ext=$("${THIS_SCRIPT_DIR}"/so-ext)
+so_ext=$("$THIS_SCRIPT_DIR"/so-ext)
 
-echo "${lang}.${so_ext}"
+echo "$lang.$so_ext"

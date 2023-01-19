@@ -5,8 +5,8 @@ THIS_SCRIPT_DIR=$(dirname "$THIS_SCRIPT")
 
 ########################################################################
 
-lang=$("${THIS_SCRIPT_DIR}"/atsp-lang)
+lang=$("$THIS_SCRIPT_DIR"/atsp-lang)
 
-underscore_name=$(echo "${lang}" | tr '-' '_')
+underscore_name=$(echo "$lang" | tr '-' '_')
 
-echo tree-sitter-"${underscore_name}".wasm
+echo tree-sitter-"$underscore_name".wasm
