@@ -66,7 +66,7 @@ printf "\n"
 ### start duplication
 
 # try getting a value from conf file
-emsdk=${ATSP_EMSDK:-"$("$ATSP_UTIL"/atsp-emsdk)"}
+emsdk=${ATSP_EMSDK_DIR:-"$("$ATSP_UTIL"/atsp-emsdk-dir)"}
 
 if [ "" = "$emsdk" ]; then
  eprintf "* Did not find an appropriate value for emsdk directory\n"

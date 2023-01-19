@@ -1,8 +1,8 @@
 # grammar language identifier
 #ATSP_LANG=
 
-# absolute path or relative to grammar directory
-ATSP_EMSDK=../emsdk
+# absolute path or relative to grammar / language repository directory
+ATSP_EMSDK_DIR=../emsdk
 
 # affects tree-sitter generate subcommand
 ATSP_ABI=13
