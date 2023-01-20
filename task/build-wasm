@@ -30,10 +30,28 @@ do_dep=${ATSP_FORCE:-0}
 if [ 1 -eq "$do_dep" ]; then
   deprintf "* Unconditionally executing %s.\n" "$dep_script"
 else
+  # XXX: tree-sitter build-wasm depends on src/parser.c
+  #      to work
+  #
+  #      gen-src calls generate which should produce src/parser.c
   deprintf "* Looking for parser source:\n"
   deprintf "    %s\n" "src/parser.c"
 
   if [ -f src/parser.c ]; then
+    deprintf "* Found.\n"
+  else
+    deprintf "* Failed to find.\n"
+    do_dep=1
+  fi
+
+  # XXX: tree-sitter depends on src/grammar.json to determine
+  #      the name of tree-sitter-<lang>.wasm
+  #
+  #      gen-src calls generate which should produce grammar.json
+  deprintf "* Looking for grammar.json:\n"
+  deprintf "    %s\n" src/grammar.json
+
+  if [ -f src/grammar.json ]; then
     deprintf "* Found.\n"
   else
     deprintf "* Failed to find.\n"
