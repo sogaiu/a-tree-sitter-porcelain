@@ -13,6 +13,9 @@ export ATSP_CONF
 ATSP_UTIL="$ATSP_ROOT"/util
 export ATSP_UTIL
 
+# XXX: is it somehow better to make the list of things that come
+#      in via conf explicit?
+
 # turn on exporting things that are sourced
 #set -a
 set -o allexport
