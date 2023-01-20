@@ -45,6 +45,19 @@ Some things that seem achievable:
 
 * Investigate / debug problems in scripts instead of binaries
 
+## Prerequisites
+
+* /bin/sh (Bash?)
+* make (gmake?)
+* C/C++ Compiler
+* Emscripten SDK (emsdk)
+* Node.js (at some point alternate JS runtime may work)
+* tree-sitter cli
+
+* Possibly good to have
+  * git
+  * rust
+
 ## Setup
 
 ```
