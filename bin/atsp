@@ -155,7 +155,8 @@ emsdk=$(realpath "$emsdk")
 
 deprintf "* emsdk: %s\n" "$emsdk"
 
-# XXX: simpler just to source emsdk_env.sh?
+# XXX: could source emsdk_env.sh, but that makes this script
+#      vulnerable to malicious changes to emsdk_env.sh
 
 # some consistency checking
 #
@@ -213,4 +214,3 @@ if [ ! -e "$task_script_full_path" ]; then
 fi
 
 "$task_script_full_path" "$@"
-

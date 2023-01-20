@@ -14,7 +14,6 @@
 #
 #      see bin/atsp for some details
 
-#
 # https://www.gnu.org/software/make/manual/html_node/Special-Targets.html
 # https://www.gnu.org/software/make/manual/html_node/Suffix-Rules.html
 # delete default suffixes / clear implicit rules(?)
@@ -24,10 +23,17 @@
 #      been made available as environment variables via whatever
 #      invokes make with this Makefile (see note above for an example)
 
-# XXX: multiple output target - expect problems
-#src/parser.c src/grammar.json src/node-types.json: grammar.js
-#	$$ATSP_TS_PATH generate --abi $$ATSP_ABI --no-bindings
-
+# iiuc, various sources suggest that commands that produce multiple
+# outputs can cause issues with make (or redo).  there is some
+# coverage here:
+#
+# https://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html
+#
+# having read that a few times, i got the sense that work-arounds are
+# being suggested.  it's not clear which situation applies to
+# tree-sitter's generate subcommand.
+#
+# for the moment, i'm not going to consider this further.
 src/parser.c: grammar.js
 	mkdir -p src
 	$(ATSP_TS_PATH) generate --abi $(ATSP_ABI) --no-bindings
