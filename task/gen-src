@@ -20,22 +20,8 @@ cd "$ATSP_LANG_ROOT" || exit 1
 
 ########################################################################
 
-deprintf "* Looking for grammar.js.\n"
-
-if [ -f grammar.js ]; then
-  deprintf "* Found.\n"
-else
-  eprintf "* Failed to find.\n"
-  eprintf "%s: abort\n" "$this_script_name"
-  exit 1
-fi
-
-abi=${ATSP_ABI:-$("$ATSP_UTIL"/atsp-abi)}
-
-# XXX: tree-sitter creates src directory if necessary so
-#      not necessary for this script to check for it?
-
-cmd="$ATSP_TS_PATH generate --abi $abi --no-bindings"
+# ATSP_TS_PATH and ATSP_ABI are necessary
+cmd="make -f $ATSP_DATA/Makefile src/parser.c"
 
 deprintf "* Invoking:\n"
 deprintf "    %s\n" "$cmd"
@@ -45,7 +31,7 @@ result=$?
 
 if [ 0 -ne "$result" ]; then
   eprintf "* Generating source failed: %s.\n" "$result"
-  eprintf "%s: abort\n" "$this_script_name"
+  deprintf "%s: abort\n" "$this_script_name"
   exit 1
 fi
 

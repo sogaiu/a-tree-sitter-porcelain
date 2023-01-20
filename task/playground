@@ -10,8 +10,6 @@ this_script_name=$(basename "$this_script")
 # shellcheck source=.common
 . "${this_script_dir}/.common"
 
-dep_script="build-wasm"
-
 ########################################################################
 
 # XXX: should this be done in other scripts?  may be not
@@ -39,63 +37,8 @@ cd "$ATSP_LANG_ROOT" || exit 1
 
 ########################################################################
 
-# this section is all about prerequisites
-
-do_dep=${ATSP_FORCE:-0}
-
-parser_wasm=$("$ATSP_UTIL"/wasm-name)
-parser_wasm_path=$ATSP_LANG_ROOT/$parser_wasm
-
-# decide whether to execute dependency script
-if [ 1 -eq "$do_dep" ]; then
-  deprintf "* Unconditionally executing %s.\n" "$dep_script"
-else
-  # XXX: tree-sitter plaground depends on tree-sitter-<lang>.wasm
-  #      to work
-  #
-  #      gen-src calls generate which should produce src/parser.c
-  deprintf "* Looking for parser wasm:\n"
-  deprintf "    %s\n" "$parser_wasm_path"
-
-  if [ -f "$parser_wasm_path" ]; then
-    deprintf "* Found.\n"
-  else
-    deprintf "* Failed to find.\n"
-    do_dep=1
-  fi
-
-  # XXX: tree-sitter depends on src/grammar.json to determine
-  #      the name of tree-sitter-<lang>.wasm
-  #
-  #      gen-src calls generate which should produce grammar.json
-  #      gen-src is called by build-wasm if necessary
-  deprintf "* Looking for grammar.json:\n"
-  deprintf "    %s\n" src/grammar.json
-
-  if [ -f src/grammar.json ]; then
-    deprintf "* Found.\n"
-  else
-    deprintf "* Failed to find.\n"
-    do_dep=1
-  fi
-fi
-
-# executing dependency script if necessary
-if [ 1 -eq "$do_dep" ]; then
-  deprintf "* Calling %s.\n" "$dep_script"
-
-  "$this_script_dir"/build-wasm
-  result=$?
-
-  if [ 0 -eq "$result" ]; then
-    deprintf "%s: resume\n" "$this_script_name"
-  else
-    eprintf "%s: abort\n" "$this_script_name"
-    exit 1
-  fi
-fi
-
-cmd="$ATSP_TS_PATH playground"
+# ATSP_PARSER_NAME is necessary
+cmd="make -f $ATSP_DATA/Makefile playground"
 
 deprintf "* Invoking:\n"
 deprintf "    %s\n" "$cmd"

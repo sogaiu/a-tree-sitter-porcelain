@@ -10,8 +10,6 @@ this_script_name=$(basename "$this_script")
 # shellcheck source=.common
 . "$this_script_dir/.common"
 
-dep_script="gen-src"
-
 ########################################################################
 
 cur_dir=$(pwd)
@@ -22,92 +20,10 @@ cd "$ATSP_LANG_ROOT" || exit 1
 
 ########################################################################
 
-# this section is all about prerequisites
-
-do_dep=${ATSP_FORCE:-0}
-
-# XXX: preconditions for test subcommand
-#
-#      load_language_at_path checks for:
-#
-#      * grammar.json - gets the grammar's language name from it
-#      * parser.c - might compile this
-#
-#      needs_recompile (called by load_language_at_path) checks for:
-#
-#      * TREE_SITTER_LIBDIR/<lang>.<so_ext> (roughly)
-#
-#      the modification times of src/parser.c and the shared object
-#      are compared in needs_recompile too
-#
-#      the modification times of src/scanner.(c|cc) and the shared object
-#      are compared in needs_recompile too
-#
-# XXX: the safest approach is to execute install-so if
-#      gen-src is going to be executed
-
-# decide whether to execute dependency script
-if [ 1 -eq "$do_dep" ]; then
-  deprintf "* Unconditionally executing %s.\n" "$dep_script"
-else
-  # XXX: this might not be enough -- see above note about preconditions
-  deprintf "* Looking for parser source:\n"
-  deprintf "    %s\n" "src/parser.c, src/grammar.json"
-
-  if [ -f src/parser.c ] && [ -f src/grammar.json ]; then
-    deprintf "* Found.\n"
-  else
-    deprintf "* Failed to find.\n"
-    do_dep=1
-  fi
-
-  # XXX: strictly speaking want to compare mtimes between:
-  #
-  #      * parser.c and shared object
-  #      * grammar.json and shared object
-  #      * scanner.(c|cc) and shared object
-  #
-  #      some issues:
-  #
-  #      * (non-portable?) ways of determining mtime via shell script unknown
-  #        * date
-  #        * find
-  #        * ls
-  #        * stat
-  #      * which shared object should be compared (installed / built)?
-  #      * as TREE_SITTER_LIBDIR is not used by any released
-  #        tree-sitter, can it be relied on to determine
-  #        location of installed shared library?
-fi
-
-# executing dependency script if necessary
-if [ 1 -eq "$do_dep" ]; then
-  deprintf "* Calling %s.\n" "$dep_script"
-
-  "$this_script_dir"/"$dep_script"
-  result=$?
-
-  if [ 0 -eq "$result" ]; then
-    deprintf "%s: resume\n" "$this_script_name"
-  else
-    eprintf "%s: abort\n" "$this_script_name"
-    exit 1
-  fi
-fi
-
-deprintf "* Invoking tree-sitter test subcommand\n"
-
-# XXX: is this a broken way to do things?
-if [ "" != "$TREE_SITTER_DIR" ]; then
-  export TREE_SITTER_DIR="$TREE_SITTER_DIR"
-fi
-
-# XXX: is this a broken way to do things?
-if [ "" != "$TREE_SITTER_LIBDIR" ]; then
-  export TREE_SITTER_LIBDIR="$TREE_SITTER_LIBDIR"
-fi
-
-cmd="$ATSP_TS_PATH test"
+# SO_INSTALL_PATH is necessary
+cmd="make -f $ATSP_DATA/Makefile corpus-test"
+# XXX: useful for debugging
+#cmd="make --debug=a -f $ATSP_DATA/Makefile corpus-test"
 
 deprintf "* Invoking:\n"
 deprintf "    %s\n" "$cmd"

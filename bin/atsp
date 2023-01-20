@@ -6,10 +6,12 @@ this_script_dir=$(dirname "${this_script}")
 ATSP_ROOT=$(realpath "$this_script_dir/..")
 export ATSP_ROOT
 
-ATSP_TASK="$ATSP_ROOT"/task
-export ATSP_TASK
 ATSP_CONF="$ATSP_ROOT"/conf
 export ATSP_CONF
+ATSP_DATA="$ATSP_ROOT"/data
+export ATSP_DATA
+ATSP_TASK="$ATSP_ROOT"/task
+export ATSP_TASK
 ATSP_UTIL="$ATSP_ROOT"/util
 export ATSP_UTIL
 
@@ -85,8 +87,6 @@ export SO_INSTALL_PATH
 # * multiple separate builds can be done without clobbering previous results
 # * less clutter
 #
-# may be BUILD_DIR_NAME is not a good choice if exposing to outside?
-#
 # NOTE: making this the same as src will make some values in this program
 #       incorrect so don't do that
 #
@@ -98,6 +98,105 @@ export SO_INSTALL_PATH
 build_dir_name=${ATSP_BUILD_DIR_NAME:-build/atsp}
 ATSP_BUILD_DIR=$ATSP_LANG_ROOT/$build_dir_name
 export ATSP_BUILD_DIR
+
+########################################################################
+
+ATSP_SO_NAME=$("$ATSP_UTIL"/so-name)
+export ATSP_SO_NAME
+
+########################################################################
+
+############
+# generate #
+############
+
+ATSP_ABI=${ATSP_ABI:-$("$ATSP_UTIL"/atsp-abi)}
+export ATSP_ABI
+
+#########################################
+# build-wasm and playground (sometimes) #
+#########################################
+
+# XXX: duplicated from task/.common
+
+# XXX: start of duplication
+
+verbose=${ATSP_VERBOSE:-0}
+
+eprintf() {
+  # shellcheck disable=SC2059
+  printf "$@" 1>&2
+}
+
+deprintf() {
+  if [ "1" = "$verbose" ]; then
+    eprintf "$@"
+  fi
+}
+
+# XXX: end of duplication
+
+ATSP_PARSER_NAME=$("$ATSP_UTIL"/wasm-name)
+export ATSP_PARSER_NAME
+
+emsdk=${ATSP_EMSDK_DIR:-"$("$ATSP_UTIL"/atsp-emsdk-dir)"}
+
+if [ "" = "$emsdk" ]; then
+ eprintf "* Did not find an appropriate value for emsdk directory\n"
+ exit 1
+fi
+
+if [ ! -d "$emsdk" ]; then
+ eprintf "* emsdk value not a directory: %s\n" "$emsdk"
+ exit 1
+fi
+
+emsdk=$(realpath "$emsdk")
+
+deprintf "* emsdk: %s\n" "$emsdk"
+
+# XXX: simpler just to source emsdk_env.sh?
+
+# some consistency checking
+#
+# XXX: this should work as long as emsdk_env.* keeps setting the
+#      EMSDK_NODE env var?
+if [ ! -d "$emsdk/node" ]; then
+  eprintf "* emsdk directory doesn't look right: %s\n" "$emsdk"
+  exit 1
+fi
+
+emscripten="$emsdk/upstream/emscripten"
+
+# XXX: validate node_version value somehow?
+node_version=$(ls "$emsdk/node")
+
+# store newline
+newline='
+'
+
+# trying to detect if node_version is a single item or not based on
+# whether it contains a newline
+case "$node_version" in
+  *"$newline"*)
+    eprintf "* Found more than one item under: %s\n"
+    eprintf "  %s\n" "$emsdk/node"
+    eprintf "\n"
+    eprintf "%s\n" "$node_version"
+    exit 1
+    ;;
+  *)
+    deprintf "* node version: %s\n" "$node_version"
+    ;;
+esac
+
+node_bin_dir_path="$emsdk/node/$node_version/bin"
+emsdk_node="$node_bin_dir_path/node"
+
+export EMSDK="$emsdk"
+export EMSDK_NODE="$emsdk_node"
+# XXX: i think this causes emsdk's node to be used by tree-sitter...
+export PATH="$emsdk:$emscripten:$node_bin_dir_path:$PATH"
 
 ########################################################################
 

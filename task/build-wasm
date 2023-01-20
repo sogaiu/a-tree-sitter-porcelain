@@ -10,8 +10,6 @@ this_script_name=$(basename "$this_script")
 # shellcheck source=.common
 . "$this_script_dir/.common"
 
-dep_script="gen-src"
-
 ########################################################################
 
 cur_dir=$(pwd)
@@ -22,142 +20,9 @@ cd "$ATSP_LANG_ROOT" || exit 1
 
 ########################################################################
 
-# this section is all about prerequisites
-
-do_dep=${ATSP_FORCE:-0}
-
-# decide whether to execute dependency script
-if [ 1 -eq "$do_dep" ]; then
-  deprintf "* Unconditionally executing %s.\n" "$dep_script"
-else
-  # XXX: tree-sitter build-wasm depends on src/parser.c
-  #      to work
-  #
-  #      gen-src calls generate which should produce src/parser.c
-  deprintf "* Looking for parser source:\n"
-  deprintf "    %s\n" "src/parser.c"
-
-  if [ -f src/parser.c ]; then
-    deprintf "* Found.\n"
-  else
-    deprintf "* Failed to find.\n"
-    do_dep=1
-  fi
-
-  # XXX: tree-sitter depends on src/grammar.json to determine
-  #      the name of tree-sitter-<lang>.wasm
-  #
-  #      gen-src calls generate which should produce grammar.json
-  deprintf "* Looking for grammar.json:\n"
-  deprintf "    %s\n" src/grammar.json
-
-  if [ -f src/grammar.json ]; then
-    deprintf "* Found.\n"
-  else
-    deprintf "* Failed to find.\n"
-    do_dep=1
-  fi
-fi
-
-# executing dependency script if necessary
-if [ 1 -eq "$do_dep" ]; then
-  deprintf "* Calling %s.\n" "$dep_script"
-
-  "$this_script_dir"/"$dep_script"
-  result=$?
-
-  if [ 0 -eq "$result" ]; then
-    deprintf "%s: resume\n" "$this_script_name"
-  else
-    eprintf "%s: abort\n" "$this_script_name"
-    exit 1
-  fi
-fi
-
-########################################################################
-
-# the rest of the file is about actually carrying things out
-
-# XXX: the following may be brittle as it depends on emscripten
-#      internals.
-#
-#      observing the output of running emsdk_env.* should indicate
-#      which environment variables are expected to have which
-#      particular values so if the following breaks, the
-#      aforementioned output could be one place to look for clues.
-#
-# XXX: not sure how to integrate emsdk_env.sh...
-#
-#      might not be possble because one needs to . or source it?
-#
-#        https://lists.gnu.org/archive/html/help-make/2006-04/msg00142.html
-#
-#      the output of sourcing displays which env vars are set and what
-#      they are set to.  a hack would be to capture and parse that output?
-#      some attempts at this failed -- "source" doesn't work via
-#      $(shell ,,,) and "." didn't work out for different reasons
-#
-#      running EMSDK_QUIET=1 python ~/src/emsdk/emsdk.py construct_env
-#      produces output of the form:
-#
-#        export PATH="...";
-#        export EMSDK="...";
-#        export EMSDK_NODE="...";
-#        unset EMSDK_QUIET;
-#
-#      possibly that could be parsed...but seems like a lot of work
-
-# XXX: doing the following as an experiment.  may be brittle though if
-#      emscripten changes certain things
-
-### start duplication
-
-# try getting a value from conf file
-emsdk=${ATSP_EMSDK_DIR:-"$("$ATSP_UTIL"/atsp-emsdk-dir)"}
-
-if [ "" = "$emsdk" ]; then
- eprintf "* Did not find an appropriate value for emsdk directory\n"
- exit 1
-fi
-
-if [ ! -d "$emsdk" ]; then
- eprintf "* emsdk value not a directory: %s\n" "$emsdk"
- exit 1
-fi
-
-emsdk=$(realpath "$emsdk")
-
-deprintf "* emsdk: %s\n" "$emsdk"
-
-# some consistency checking
-#
-# XXX: this should work as long as emsdk_env.* keeps setting the
-#      EMSDK_NODE env var?
-if [ ! -d "$emsdk/node" ]; then
-  eprintf "* emsdk directory doesn't look right: %s\n" "$emsdk"
-  exit 1
-fi
-
-### end duplication
-
-emscripten="$emsdk/upstream/emscripten"
-
-# XXX: is there a guarantee that this will yield a single value?
-# XXX: validate node_version value somehow?
-node_version=$(ls "$emsdk/node")
-
-node_bin_dir_path="$emsdk/node/$node_version/bin"
-emsdk_node="$node_bin_dir_path/node"
-
-export EMSDK="$emsdk"
-export EMSDK_NODE="$emsdk_node"
-export PATH="$emsdk:$emscripten:$node_bin_dir_path:$PATH"
-
-# XXX: possibly need to make TREE_SITTER_DIR / TREE_SITTER_LIBDIR
-#      available via export?  don't think so as those are only
-#      necessary for parsing-like activities?
-
-cmd="$ATSP_TS_PATH build-wasm"
+# ATSP_PARSER_NAME is necessary
+# EMSDK* and PATH are set before this
+cmd="make -f $ATSP_DATA/Makefile $ATSP_PARSER_NAME"
 
 deprintf "* Invoking:\n"
 deprintf "    %s\n" "$cmd"

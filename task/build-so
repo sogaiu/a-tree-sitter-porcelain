@@ -10,8 +10,6 @@ this_script_name=$(basename "$this_script")
 # shellcheck source=.common
 . "$this_script_dir/.common"
 
-dep_script="gen-src"
-
 ########################################################################
 
 cur_dir=$(pwd)
@@ -22,65 +20,8 @@ cd "$ATSP_LANG_ROOT" || exit 1
 
 ########################################################################
 
-# this section is all about prerequisites
-
-do_dep=${ATSP_FORCE:-0}
-
-# decide whether to execute dependency script
-if [ 1 -eq "$do_dep" ]; then
-  deprintf "* Unconditionally executing %s.\n" "$dep_script"
-else
-  deprintf "* Looking for parser source:\n"
-  deprintf "    %s\n" "src/parser.c"
-
-  if [ -f src/parser.c ]; then
-    deprintf "* Found.\n"
-  else
-    deprintf "* Failed to find.\n"
-    do_dep=1
-  fi
-fi
-
-# executing dependency script if necessary
-if [ 1 -eq "$do_dep" ]; then
-  deprintf "* Calling %s.\n" "$dep_script"
-
-  "$this_script_dir"/"$dep_script"
-  result=$?
-
-  if [ 0 -eq "$result" ]; then
-    deprintf "%s: resume\n" "$this_script_name"
-  else
-    eprintf "%s: abort\n" "$this_script_name"
-    exit 1
-  fi
-fi
-
-########################################################################
-
-# the rest of the file is about actually carrying things out
-
-deprintf "* Ensuring build directory exists at:\n"
-
-deprintf "    %s\n" "$ATSP_BUILD_DIR"
-
-mkdir -p "$ATSP_BUILD_DIR"
-
-so_name=$("$ATSP_UTIL"/so-name)
-
-# XXX: not relying on the tree-sitter cli for building seems more
-#      flexible.
-#
-#      on windows i had problems compiling using msys2 / mingw64 when
-#      trying to use various tree-sitter subcommands.  to debug, i
-#      ended up modifying the tree-sitter cli's source code to print
-#      out precisely what the compiler invocation was.  that involved
-#      writing some rust, recomplining the tree-sitter cli, and
-#      running the invocation again.  that kind of thing seems like it
-#      could be avoided by externalization as is dones below.
-deprintf "* Compiling parser\n"
-
-cmd="cc -fPIC -c -Isrc src/parser.c -o $ATSP_BUILD_DIR/parser.o"
+# ATSP_BUILD_DIR and ATSP_SO_NAME are necessary
+cmd="make -f $ATSP_DATA/Makefile $ATSP_BUILD_DIR/$ATSP_SO_NAME"
 
 deprintf "* Invoking:\n"
 deprintf "    %s\n" "$cmd"
@@ -94,53 +35,8 @@ if [ 0 -ne "$result" ]; then
   exit 1
 fi
 
-has_scanner=0
-
-if [ -f src/scanner.c ]; then
-  cmd="cc -fPIC -c -Isrc src/scanner.c -o $ATSP_BUILD_DIR/scanner.o"
-  has_scanner=1
-elif [ -f src/scanner.cc ]; then
-  cmd="c++ -fPIC -Isrc -c src/scanner.cc -o $ATSP_BUILD_DIR/scanner.o"
-  has_scanner=1
-fi
-
-if [ 1 -eq "$has_scanner" ]; then
-  deprintf "* Compiling scanner\n"
-
-  deprintf "* Invoking:\n"
-  deprintf "    %s\n" "$cmd"
-
-  eval "$cmd"
-  result=$?
-
-  if [ 0 -ne "$result" ]; then
-    eprintf "* Compiling failed: %s.\n" "$result"
-    eprintf "%s: abort\n" "$this_script_name"
-    exit 1
-  fi
-fi
-
-deprintf "* Linking\n"
-if [ -f src/scanner.cc ]; then
-  cmd="c++ -fPIC -shared $ATSP_BUILD_DIR/*.o -o $ATSP_BUILD_DIR/$so_name"
-else
-  cmd="cc -fPIC -shared $ATSP_BUILD_DIR/*.o -o $ATSP_BUILD_DIR/$so_name"
-fi
-
-deprintf "* Invoking:\n"
-deprintf "    %s\n" "$cmd"
-
-eval "$cmd"
-result=$?
-
-if [ 0 -ne "$result" ]; then
-  eprintf "* Linking failed: %s.\n" "$result"
-  eprintf "%s: abort\n" "$this_script_name"
-  exit 1
-fi
-
 deprintf "* Result is at:\n"
-deprintf "    %s\n" "$ATSP_BUILD_DIR/$so_name"
+deprintf "    %s\n" "$ATSP_BUILD_DIR/$ATSP_SO_NAME"
 
 ########################################################################
 

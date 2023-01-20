@@ -20,11 +20,6 @@ cd "$ATSP_LANG_ROOT" || exit 1
 
 ########################################################################
 
-# XXX: is this a broken way to do things?
-if [ "" != "$TREE_SITTER_DIR" ]; then
-  export TREE_SITTER_DIR="$TREE_SITTER_DIR"
-fi
-
 $ATSP_TS_PATH dump-languages
 result=$?
 
