@@ -7,6 +7,4 @@ this_script_dir=$(dirname "$this_script")
 
 lang=$("$this_script_dir"/atsp-lang)
 
-underscore_name=$(echo "$lang" | tr '-' '_')
-
-echo tree-sitter-"$underscore_name".wasm
+echo tree-sitter-"$lang".wasm
