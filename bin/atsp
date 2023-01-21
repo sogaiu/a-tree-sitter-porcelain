@@ -146,6 +146,19 @@ if [ "" = "$emsdk" ]; then
  exit 1
 fi
 
+case "$emsdk" in
+  # absolute
+  /*)
+    deprintf "* absolute path: %s\n" "$emsdk"
+    ;;
+  # relative
+  *)
+    deprintf "* relative path: %s\n" "$emsdk"
+    # resolve paths relative to grammar root
+    emsdk="$ATSP_LANG_ROOT/$emsdk"
+    ;;
+esac
+
 if [ ! -d "$emsdk" ]; then
  eprintf "* emsdk value not a directory: %s\n" "$emsdk"
  exit 1
