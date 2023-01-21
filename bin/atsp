@@ -15,22 +15,94 @@ export ATSP_TASK
 ATSP_UTIL="$ATSP_ROOT"/util
 export ATSP_UTIL
 
-# XXX: is it somehow better to make the list of things that come
-#      in via conf explicit?
+cur_dir=$(pwd)
 
-# turn on exporting things that are sourced
-#set -a
-set -o allexport
-# shellcheck source=../conf
-. "$ATSP_CONF"
-# turn off exporting things that are sourced
-#set +a
-set +o allexport
+########################################################################
+
+# precendence
+#
+# 1. command line
+# 2. environment variables
+# 3. configuration file
+
+# 1. command line
+#
+# XXX: if command line arguments are ever supported, need to capture
+#      values around here?
+
+# 2. environment variables
+#
+# values that might have been set via env vars when the program
+# started.  note that these are specifically also things that can be
+# set in atsp/conf (though whether they were is not checked until
+# later).
+#
+# other environment variables that might have been set are checked
+# later.
+atsp_abi=${ATSP_ABI}
+# shellcheck disable=SC2153
+atsp_emsdk_dir=${ATSP_EMSDK_DIR}
+atsp_lang=${ATSP_LANG}
+atsp_ts_path=${ATSP_TS_PATH}
+# shellcheck disable=SC2153
+atsp_verbose=${ATSP_VERBOSE}
+
+# XXX: still pondering whether to allow in atsp/conf
+tree_sitter_dir=${TREE_SITTER_DIR}
+tree_sitter_libdir=${TREE_SITTER_LIBDIR}
+
+########################################################################
+
+verbose=${atsp_verbose:-$("$ATSP_UTIL"/atsp-verbose)}
+verbose=${verbose:-0}
+
+# XXX: duplicated from task/.common
+
+# XXX: start of duplication
+
+eprintf() {
+  # shellcheck disable=SC2059
+  printf "$@" 1>&2
+}
+
+deprintf() {
+  if [ "1" = "$verbose" ]; then
+    eprintf "$@"
+  fi
+}
+
+# XXX: end of duplication
+
+# call like:
+#
+#   $(_resolve_wrt "$path" "$root")
+#
+# to get string return value
+_resolve_wrt() {
+  path=$1
+  root=$2
+
+  case "$path" in
+    # absolute
+    /*)
+      #deprintf "* absolute path: %s\n" "$path"
+      ;;
+    # relative
+    *)
+      # XXX: is not using realpath here ok?
+      #deprintf "* relative path: %s\n" "$path"
+      path="$root/$path"
+      ;;
+  esac
+
+  echo "$path"
+}
 
 ########################################################################
 
 # the parser project directory
 ATSP_LANG_ROOT=$(realpath "$this_script_dir"/../..)
+deprintf "ATSP_LANG_ROOT: %s\n" "$ATSP_LANG_ROOT"
 export ATSP_LANG_ROOT
 
 ########################################################################
@@ -44,6 +116,12 @@ export ATSP_LANG_ROOT
 
 ########################################################################
 
+ATSP_LANG=${atsp_lang:-$("$ATSP_UTIL"/atsp-lang)}
+if [ "" = "$ATSP_LANG" ]; then
+  eprintf "ATSP_LANG needs to be defined, please edit .atsp/conf file.\n"
+  exit 1
+fi
+
 # path to tree-sitter cli binary
 #
 # >= 0.19.4 added --no-bindings
@@ -53,10 +131,39 @@ export ATSP_LANG_ROOT
 # XXX: note that version string from binary may not be a good way to
 #      compare versions because unreleased things appear to use the
 #      same version string
-ATSP_TS_PATH=${ATSP_TS_PATH:-tree-sitter}
+
+if [ "" != "$atsp_ts_path" ]; then
+  # via env var means should resolve wrt current directory
+  ATSP_TS_PATH=$(_resolve_wrt "$atsp_ts_path" "$cur_dir")
+else
+  # via configuration file means should be resolved wrt ATSP_LANG_ROOT
+  from_conf=$("$ATSP_UTIL"/atsp-ts-path)
+  if [ "" != "$from_conf" ]; then
+    ATSP_TS_PATH=$(_resolve_wrt "$from_conf" "$ATSP_LANG_ROOT")
+  else
+    ATSP_TS_PATH=tree-sitter
+  fi
+  from_conf=
+fi
+
+deprintf "ATSP_TS_PATH: %s\n" "$ATSP_TS_PATH"
 export ATSP_TS_PATH
 
-TREE_SITTER_DIR=${TREE_SITTER_DIR:-$ATSP_LANG_ROOT/.tree-sitter}
+if [ "" != "$tree_sitter_dir" ]; then
+  # via env var means should resolve wrt current directory
+  TREE_SITTER_DIR=$(_resolve_wrt "$tree_sitter_dir" "$cur_dir")
+else
+  # via configuration file means should be resolved wrt ATSP_LANG_ROOT
+  from_conf=$("$ATSP_UTIL"/tree-sitter-dir)
+  if [ "" != "$from_conf" ]; then
+    TREE_SITTER_DIR=$(_resolve_wrt "$from_conf" "$ATSP_LANG_ROOT")
+  else
+    TREE_SITTER_DIR=$(_resolve_wrt ".tree-sitter" "$ATSP_LANG_ROOT")
+  fi
+  from_conf=
+fi
+
+deprintf "TREE_SITTER_DIR: %s\n" "$TREE_SITTER_DIR"
 export TREE_SITTER_DIR
 
 # XXX: the env var TREE_SITTER_LIBDIR only affects the tree-sitter cli
@@ -64,17 +171,34 @@ export TREE_SITTER_DIR
 #      expression but just put its value in SO_INSTALL_DIR and use
 #      that instead
 
-# XXX: if computed, same as via the so-install-dir util script below
-TREE_SITTER_LIBDIR=${TREE_SITTER_LIBDIR:-$TREE_SITTER_DIR/lib}
+if [ "" != "$tree_sitter_libdir" ]; then
+  # via env var means should resolve wrt current directory
+  TREE_SITTER_LIBDIR=$(_resolve_wrt "$tree_sitter_libdir" "$cur_dir")
+else
+  # via configuration file means should be resolved wrt ATSP_LANG_ROOT
+  from_conf=$("$ATSP_UTIL"/tree-sitter-libdir)
+  if [ "" != "$from_conf" ]; then
+    TREE_SITTER_LIBDIR=$(_resolve_wrt "$from_conf" "$ATSP_LANG_ROOT")
+  else
+    TREE_SITTER_LIBDIR="$TREE_SITTER_DIR/lib"
+  fi
+  from_conf=
+fi
+
+deprintf "TREE_SITTER_LIBDIR: %s\n" "$TREE_SITTER_LIBDIR"
 export TREE_SITTER_LIBDIR
 
 # XXX: can we not just use TREE_SITTER_LIBDIR?
 # where the shared object is looked for by tree-sitter cli
 SO_INSTALL_DIR=$("$ATSP_UTIL"/so-install-dir "$TREE_SITTER_DIR")
+
+deprintf "SO_INSTALL_DIR: %s\n" "$SO_INSTALL_DIR"
 export SO_INSTALL_DIR
 
 # path to installed shared object
 SO_INSTALL_PATH=$("$ATSP_UTIL"/so-install-path "$SO_INSTALL_DIR")
+
+deprintf "SO_INSTALL_PATH: %s\n" "$SO_INSTALL_PATH"
 export SO_INSTALL_PATH
 
 # build directory for shared object
@@ -94,14 +218,19 @@ export SO_INSTALL_PATH
 #       build can also contain node or rust bindings.  don't want to
 #       accidentally delete those
 
+# XXX: is this ok...
 # XXX: could have a script that fetches a default value?
 build_dir_name=${ATSP_BUILD_DIR_NAME:-build/atsp}
-ATSP_BUILD_DIR=$ATSP_LANG_ROOT/$build_dir_name
+ATSP_BUILD_DIR=$(_resolve_wrt "$build_dir_name" "$ATSP_LANG_ROOT")
+
+deprintf "ATSP_BUILD_DIR: %s\n" "$ATSP_BUILD_DIR"
 export ATSP_BUILD_DIR
 
 ########################################################################
 
 ATSP_SO_NAME=$("$ATSP_UTIL"/so-name)
+
+deprintf "ATSP_SO_NAME: %s\n" "$ATSP_SO_NAME"
 export ATSP_SO_NAME
 
 ########################################################################
@@ -110,58 +239,41 @@ export ATSP_SO_NAME
 # generate #
 ############
 
-ATSP_ABI=${ATSP_ABI:-$("$ATSP_UTIL"/atsp-abi)}
+ATSP_ABI=${atsp_abi:-$("$ATSP_UTIL"/atsp-abi)}
+ATSP_ABI=${ATSP_ABI:-13}
+
+deprintf "ATSP_ABI: %s\n" "$ATSP_ABI"
 export ATSP_ABI
 
 #########################################
 # build-wasm and playground (sometimes) #
 #########################################
 
-# XXX: duplicated from task/.common
-
-# XXX: start of duplication
-
-verbose=${ATSP_VERBOSE:-0}
-
-eprintf() {
-  # shellcheck disable=SC2059
-  printf "$@" 1>&2
-}
-
-deprintf() {
-  if [ "1" = "$verbose" ]; then
-    eprintf "$@"
-  fi
-}
-
-# XXX: end of duplication
-
 ATSP_PARSER_NAME=$("$ATSP_UTIL"/wasm-name)
+
+deprintf "ATSP_PARSER_NAME: %s\n" "$ATSP_PARSER_NAME"
 export ATSP_PARSER_NAME
 
-emsdk=${ATSP_EMSDK_DIR:-"$("$ATSP_UTIL"/atsp-emsdk-dir)"}
-
-if [ "" = "$emsdk" ]; then
- eprintf "* Did not find an appropriate value for emsdk directory\n"
- exit 1
+emsdk=
+if [ "" != "$atsp_emsdk_dir" ]; then
+  # via env var means should resolve wrt current directory
+  emsdk=$(_resolve_wrt "$atsp_emsdk_dir" "$cur_dir")
+else
+  # via configuration file means should be resolved wrt ATSP_LANG_ROOT
+  from_conf=$("$ATSP_UTIL"/atsp-emsdk-dir)
+  if [ "" != "$from_conf" ]; then
+    emsdk=$(_resolve_wrt "$from_conf" "$ATSP_LANG_ROOT")
+  else
+    # XXX: no good default value
+    eprintf "* Did not find an acceptable value for emsdk directory\n"
+    exit 1
+  fi
+  from_conf=
 fi
 
-case "$emsdk" in
-  # absolute
-  /*)
-    deprintf "* absolute path: %s\n" "$emsdk"
-    ;;
-  # relative
-  *)
-    deprintf "* relative path: %s\n" "$emsdk"
-    # resolve paths relative to grammar root
-    emsdk="$ATSP_LANG_ROOT/$emsdk"
-    ;;
-esac
-
 if [ ! -d "$emsdk" ]; then
- eprintf "* emsdk value not a directory: %s\n" "$emsdk"
- exit 1
+  eprintf "* emsdk value not a directory: %s\n" "$emsdk"
+  exit 1
 fi
 
 emsdk=$(realpath "$emsdk")
@@ -176,7 +288,7 @@ deprintf "* emsdk: %s\n" "$emsdk"
 # XXX: this should work as long as emsdk_env.* keeps setting the
 #      EMSDK_NODE env var?
 if [ ! -d "$emsdk/node" ]; then
-  eprintf "* emsdk directory doesn't look right: %s\n" "$emsdk"
+  eprintf "* emsdk directory doesn't have node subdirectory: %s\n" "$emsdk"
   exit 1
 fi
 
@@ -208,9 +320,12 @@ node_bin_dir_path="$emsdk/node/$node_version/bin"
 emsdk_node="$node_bin_dir_path/node"
 
 export EMSDK="$emsdk"
+deprintf "EMSDK: %s\n" "$EMSDK"
 export EMSDK_NODE="$emsdk_node"
+deprintf "EMSDK_NODE: %s\n" "$EMSDK_NODE"
 # XXX: i think this causes emsdk's node to be used by tree-sitter...
 export PATH="$emsdk:$emscripten:$node_bin_dir_path:$PATH"
+deprintf "PATH: %s\n" "$PATH"
 
 ########################################################################
 

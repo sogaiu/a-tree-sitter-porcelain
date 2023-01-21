@@ -1,0 +1,11 @@
+#! /bin/sh
+
+this_script=$(readlink -f "$0")
+this_script_dir=$(dirname "$this_script")
+
+# XXX: should this be a script?
+ATSP_CONF=$(realpath "$this_script_dir"/../conf)
+
+########################################################################
+
+"$this_script_dir"/get-conf "$ATSP_CONF" TREE_SITTER_LIBDIR

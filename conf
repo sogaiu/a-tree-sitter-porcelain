@@ -12,3 +12,7 @@ ATSP_ABI=13
 
 # output verbosity
 #ATSP_VERBOSE=1
+
+#TREE_SITTER_DIR=.tree-sitter
+
+#TREE_SITTER_LIBDIR=.tree-sitter/lib
