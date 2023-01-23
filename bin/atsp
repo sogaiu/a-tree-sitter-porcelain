@@ -1,5 +1,8 @@
 #! /bin/sh
 
+# XXX: realpath or readlink utility
+#      apparently there are different versions of both(?)
+#      readlink (function) doesn't work on windows(?)
 this_script=$(readlink -f "$0")
 this_script_dir=$(dirname "${this_script}")
 
