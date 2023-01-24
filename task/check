@@ -7,10 +7,6 @@ this_script=$(readlink -f "$0")
 this_script_dir=$(dirname "$this_script")
 this_script_name=$(basename "$this_script")
 
-# capture before being overwritten
-old_tree_sitter_dir="$TREE_SITTER_DIR"
-old_tree_sitter_libdir="$TREE_SITTER_LIBDIR"
-
 # shellcheck source=.common
 . "$this_script_dir/.common"
 
@@ -61,49 +57,37 @@ printf "\n"
 printf "emsdk\n"
 printf "\n"
 
-# XXX: this was taken from build-wasm...should not be duplicating...
-
-### start duplication
-
 # try getting a value from conf file
 emsdk=${ATSP_EMSDK_DIR:-"$("$ATSP_UTIL"/atsp-emsdk-dir)"}
 
+# XXX: this is not using the same logic necessarily as other code so
+#      its reliability is more in doubt than otherwise...
+
 if [ "" = "$emsdk" ]; then
  eprintf "* Did not find an appropriate value for emsdk directory\n"
- exit 1
+ eprintf "  * build-wasm and playground subcommands may not work\n"
+ else
+   if [ ! -d "$emsdk" ]; then
+     eprintf "* emsdk value not a directory: %s\n" "$emsdk"
+     eprintf "  * build-wasm and playground subcommands may not work\n"
+   else
+     emsdk=$(realpath "$emsdk")
+
+     printf "* emsdk: %s\n" "$emsdk"
+
+     printf "* Looks like an emsdk directory\n"
+
+     # XXX: lame...
+     #   https://emscripten.org/docs/tools_reference/emsdk.html#how-do-i-check-which-versions-of-the-sdk-and-tools-are-installed
+     printf "* To find out the version installed, run:\n"
+
+     printf "    ./emsdk list | grep INSTALLED\n"
+
+     printf "  in:\n"
+
+     printf "    %s\n" "$emsdk"
+   fi
 fi
-
-if [ ! -d "$emsdk" ]; then
- eprintf "* emsdk value not a directory: %s\n" "$emsdk"
- exit 1
-fi
-
-emsdk=$(realpath "$emsdk")
-
-printf "* emsdk: %s\n" "$emsdk"
-
-# some consistency checking
-#
-# XXX: this should work as long as emsdk_env.* keeps setting the
-#      EMSDK_NODE env var?
-if [ ! -d "$emsdk/node" ]; then
-  eprintf "* emsdk directory doesn't look right: %s\n" "$emsdk"
-  exit 1
-fi
-
-### end duplication
-
-printf "* Looks like an emsdk directory\n"
-
-# XXX: lame...
-#   https://emscripten.org/docs/tools_reference/emsdk.html#how-do-i-check-which-versions-of-the-sdk-and-tools-are-installed
-printf "* To find out the version installed, run:\n"
-
-printf "    ./emsdk list | grep INSTALLED\n"
-
-printf "  in:\n"
-
-printf "    %s\n" "$emsdk"
 
 ########################################################################
 
@@ -111,22 +95,14 @@ printf "\n"
 printf "Some TREE_SITTER_* environment variables\n"
 printf "\n"
 
-printf "* In the original environment:\n"
+printf "* TREE_SITTER_DIR: %s\n" "$TREE_SITTER_DIR"
 
-printf "  * TREE_SITTER_DIR was: %s\n" "$old_tree_sitter_dir"
-
-printf "  * TREE_SITTER_LIBDIR was: %s\n" "$old_tree_sitter_libdir"
-
-printf "* atsp may have massaged these to:\n"
-
-printf "  * TREE_SITTER_DIR: %s\n" "$TREE_SITTER_DIR"
-
-printf "  * TREE_SITTER_LIBDIR: %s\n" "$TREE_SITTER_LIBDIR"
+printf "* TREE_SITTER_LIBDIR: %s\n" "$TREE_SITTER_LIBDIR"
 
 ########################################################################
 
 printf "\n"
-printf "atsp's conf file currently contains:\n"
+printf "atsp's conf currently contains:\n"
 printf "\n"
 
 cat "$ATSP_CONF"
