@@ -56,8 +56,7 @@ tree_sitter_libdir=${TREE_SITTER_LIBDIR}
 
 ########################################################################
 
-verbose=${atsp_verbose:-$("$ATSP_UTIL"/atsp-verbose)}
-verbose=${verbose:-0}
+verbose=${atsp_verbose:-0}
 
 # XXX: duplicated from task/.common
 

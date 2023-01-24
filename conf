@@ -10,9 +10,6 @@ ATSP_ABI=13
 # optional, defaults to tree-sitter if not specified
 #ATSP_TS_PATH=tree-sitter
 
-# output verbosity
-#ATSP_VERBOSE=1
-
 #TREE_SITTER_DIR=.tree-sitter
 
 #TREE_SITTER_LIBDIR=.tree-sitter/lib
