@@ -17,6 +17,20 @@ export ATSP_UTIL
 
 cur_dir=$(pwd)
 
+task_script_path="$1"
+task_script_name="$(basename "$task_script_path")"
+
+task_script_full_path="$ATSP_TASK/$task_script_name"
+
+shift
+
+# now $@ represent doesn't have the script's name in it
+
+if [ ! -e "$task_script_full_path" ]; then
+  eprintf "Subcommand not found: %s\n" "$task_script_name"
+  exit 1
+fi
+
 ########################################################################
 
 # precendence
@@ -248,55 +262,46 @@ export ATSP_ABI
 # build-wasm and playground (sometimes) #
 #########################################
 
-ATSP_PARSER_NAME=$("$ATSP_UTIL"/wasm-name)
+if [ "build-wasm" = "$task_script_name" ] || \
+   [ "playground" = "$task_script_name" ]; then
+  ATSP_PARSER_NAME=$("$ATSP_UTIL"/wasm-name)
 
-deprintf "ATSP_PARSER_NAME: %s\n" "$ATSP_PARSER_NAME"
-export ATSP_PARSER_NAME
+  deprintf "ATSP_PARSER_NAME: %s\n" "$ATSP_PARSER_NAME"
+  export ATSP_PARSER_NAME
 
-emsdk=
-if [ "" != "$atsp_emsdk_dir" ]; then
-  # via env var means should resolve wrt current directory
-  emsdk=$(_resolve_wrt "$atsp_emsdk_dir" "$cur_dir")
-else
-  # via configuration file means should be resolved wrt ATSP_LANG_ROOT
-  from_conf=$("$ATSP_UTIL"/atsp-emsdk-dir)
-  if [ "" != "$from_conf" ]; then
-    emsdk=$(_resolve_wrt "$from_conf" "$ATSP_LANG_ROOT")
+  emsdk=
+  if [ "" != "$atsp_emsdk_dir" ]; then
+    # via env var means should resolve wrt current directory
+    emsdk=$(_resolve_wrt "$atsp_emsdk_dir" "$cur_dir")
   else
-    # XXX: no good default value
-    eprintf "* Did not find an acceptable value for emsdk directory\n"
+    # via configuration file means should be resolved wrt ATSP_LANG_ROOT
+    from_conf=$("$ATSP_UTIL"/atsp-emsdk-dir)
+    if [ "" != "$from_conf" ]; then
+      emsdk=$(_resolve_wrt "$from_conf" "$ATSP_LANG_ROOT")
+    else
+      # XXX: no good default value
+      eprintf "* ATSP_EMSDK_DIR needed in conf or as env var\n"
+      exit 1
+    fi
+    from_conf=
+  fi
+
+  if [ ! -d "$emsdk" ]; then
+    eprintf "* emsdk value not a directory: %s\n" "$emsdk"
     exit 1
   fi
-  from_conf=
+
+  emsdk_root=$(realpath "$emsdk")
+
+  deprintf "* emsdk_root: %s\n" "$emsdk_root"
+
+  emscripten_dir="$emsdk_root/upstream/emscripten"
+
+  # https://github.com/emscripten-core/emsdk/issues/1142#issuecomment-1334065131
+  export PATH="$emscripten_dir:$PATH"
+  deprintf "PATH: %s\n" "$PATH"
 fi
-
-if [ ! -d "$emsdk" ]; then
-  eprintf "* emsdk value not a directory: %s\n" "$emsdk"
-  exit 1
-fi
-
-emsdk=$(realpath "$emsdk")
-
-deprintf "* emsdk: %s\n" "$emsdk"
-
-emscripten="$emsdk/upstream/emscripten"
-
-# https://github.com/emscripten-core/emsdk/issues/1142#issuecomment-1334065131
-export PATH="$emscripten:$PATH"
-deprintf "PATH: %s\n" "$PATH"
 
 ########################################################################
-
-task_script_path="$1"
-task_script_name="$(basename "$task_script_path")"
-
-task_script_full_path="$ATSP_TASK/$task_script_name"
-
-shift
-
-if [ ! -e "$task_script_full_path" ]; then
-  eprintf "Subcommand not found: %s\n" "$task_script_name"
-  exit 1
-fi
 
 "$task_script_full_path" "$@"
