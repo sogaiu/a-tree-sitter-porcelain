@@ -50,6 +50,7 @@ src/node-types.json: grammar.js
 #      project it may not exist.  is this appropriate?
 $(ATSP_BUILD_DIR)/$(ATSP_SO_NAME): src/parser.c
 	mkdir -p $(ATSP_BUILD_DIR)
+	# Compiling parser.c
 	cc -fPIC -c -Isrc src/parser.c -o $(ATSP_BUILD_DIR)/parser.o
 	# May be compiling scanner.c
 	if test -f src/scanner.c; then \
