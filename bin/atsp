@@ -279,51 +279,10 @@ emsdk=$(realpath "$emsdk")
 
 deprintf "* emsdk: %s\n" "$emsdk"
 
-# XXX: could source emsdk_env.sh, but that makes this script
-#      vulnerable to malicious changes to emsdk_env.sh
-
-# some consistency checking
-#
-# XXX: this should work as long as emsdk_env.* keeps setting the
-#      EMSDK_NODE env var?
-if [ ! -d "$emsdk/node" ]; then
-  eprintf "* emsdk directory doesn't have node subdirectory: %s\n" "$emsdk"
-  exit 1
-fi
-
 emscripten="$emsdk/upstream/emscripten"
 
-# XXX: validate node_version value somehow?
-node_version=$(ls "$emsdk/node")
-
-# store newline
-newline='
-'
-
-# trying to detect if node_version is a single item or not based on
-# whether it contains a newline
-case "$node_version" in
-  *"$newline"*)
-    eprintf "* Found more than one item under: %s\n"
-    eprintf "  %s\n" "$emsdk/node"
-    eprintf "\n"
-    eprintf "%s\n" "$node_version"
-    exit 1
-    ;;
-  *)
-    deprintf "* node version: %s\n" "$node_version"
-    ;;
-esac
-
-node_bin_dir_path="$emsdk/node/$node_version/bin"
-emsdk_node="$node_bin_dir_path/node"
-
-export EMSDK="$emsdk"
-deprintf "EMSDK: %s\n" "$EMSDK"
-export EMSDK_NODE="$emsdk_node"
-deprintf "EMSDK_NODE: %s\n" "$EMSDK_NODE"
-# XXX: i think this causes emsdk's node to be used by tree-sitter...
-export PATH="$emsdk:$emscripten:$node_bin_dir_path:$PATH"
+# https://github.com/emscripten-core/emsdk/issues/1142#issuecomment-1334065131
+export PATH="$emscripten:$PATH"
 deprintf "PATH: %s\n" "$PATH"
 
 ########################################################################
