@@ -99,13 +99,13 @@ uninstall-so       Uninstall grammar's shared object
 
 * `bin` - contains wrapper program `atsp` for convenient task execution
 * `conf` - contains settings specific to the grammar repository
-* `task` - task scripts
-* `util` - directory of utility scripts used by task scripts
+* `task` - task programs
+* `util` - directory of utility programs used by task programs
 * `README.md` - this README file
 
 ### `bin`
 
-Add this directory to your PATH to make the wrapper script `atsp`
+Add this directory to your PATH to make the `atsp` wrapper program
 conveniently available for use.
 
 ### `conf`
@@ -124,27 +124,19 @@ Other values that can be configured include:
 
 ### `task`
 
-Each task script in `task` expresses a task one might carry out in the
-course of working with a grammar repository such as:
+Most programs in the `task` directory express a task one might carry
+out in the course of working with a grammar repository such as:
 
 * Generating parser source from `grammar.js`
 * Cleaning up files and directories
 * Starting the web playground
 
-The scripts can be executed on their own but they can also be used as
-subcommands from the `atsp` wrapper program.
+The programs are meant to be executed via the `atsp` wrapper program
+as "subcommands".  It's possible to execute them on their own, but
+it's likely some appropriate environment variables will need to be
+set.
 
 ### `util`
 
-The `util` directory contains some scripts that allow reuse of
+The `util` directory contains some programs that allow reuse of
 functionality.  The hope here was to reduce duplication.
-
-## Linting Shell Scripts
-
-To lint, run `shellcheck -x <name>` on the shell files in `task`
-and `util` directories.
-
-Invoke [`shellcheck`](https://github.com/koalaman/shellcheck) from
-inside `task` or `util`.  I'm not sure its checking will function
-correctly for "source"d files otherwise.
-
