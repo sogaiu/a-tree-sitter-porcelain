@@ -22,9 +22,8 @@ task_script_name="$(basename "$task_script_path")"
 
 task_script_full_path="$ATSP_TASK/$task_script_name"
 
+# after the next line, $@ won't have the script's name in it
 shift
-
-# now $@ represent doesn't have the script's name in it
 
 if [ ! -e "$task_script_full_path" ]; then
   eprintf "Subcommand not found: %s\n" "$task_script_name"
